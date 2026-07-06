@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Projects - Hyunwoo Lim</title>
+    <title>Projects — Hyunwoo Lim</title>
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <nav>
@@ -11,60 +12,103 @@
       <ul>
         <li><a href="index.html">Home</a></li>
         <li><a href="education.html">Education</a></li>
-        <li><a href="projects.html">Projects</a></li>
-        <li><a href="interests.html">interest</a></li>
+        <li><a href="projects.html" class="active">Projects</a></li>
+        <li><a href="interests.html">Interests</a></li>
         <li><a href="contact.html">Contact</a></li>
       </ul>
     </nav>
 
     <section>
-      <article>
-        <h2>Security Hub</h2>
-        <p>AI 기반 피싱 탐지 및 가상 샌드박스 테스트 앱 (한이음 ICT 드림업 2026)</p>
-        <p>
-          URL/문자로 온 의심스러운 링크를 직접 클릭하지 않고도 안전하게 분석·체험할 수 있는 모바일 앱입니다.
-          도메인 평판·유사도·휴리스틱 점수로 위험도를 판정하고, Docker 기반 가상 샌드박스에서 페이지를 대신 열어
-          위험 요소를 시각적으로 보여줍니다. Gemini API로 분석 결과를 사람이 읽기 쉽게 요약합니다.
-        </p>
-        <p>Backend: FastAPI, Docker, Playwright, Gemini API &middot; Frontend: Flutter (Android/iOS)</p>
-        <a href="https://github.com/gusn9719/security_hub" target="_blank">GitHub</a>
-      </article>
+      <h1>Projects</h1>
+      <p>학교 과제로 시작했더라도, 실제로 쓸모 있게 만드는 데까지 가져가려고 합니다.</p>
 
-      <article>
-        <h2>Gemma4 T17 RAG Fine-tuning</h2>
-        <p>서비스 매뉴얼 기반 QA 시스템</p>
+      <div class="card">
+        <div class="card-header">
+          <h3>Security Hub</h3>
+        </div>
+        <div class="tag-row">
+          <span class="badge">학술대회 발표</span>
+          <span class="badge">한이음 ICT 드림업 2026</span>
+        </div>
         <p>
-          Gemma4 모델을 QLoRA로 파인튜닝하고, FAISS + BM25 하이브리드 검색으로 문서를 찾아 답하는 RAG 파이프라인을
-          구축했습니다. PDF 매뉴얼을 파싱해 텍스트/이미지 청크로 인덱싱하고, 파인튜닝한 모델과 결합해 정확한 답변을
-          생성합니다.
+          의심스러운 URL/문자를 직접 클릭하지 않고 안전하게 분석·체험할 수 있는 AI 기반 피싱 탐지 앱입니다.
+          도메인 평판·유사도·휴리스틱 점수로 위험도를 판정하고, Docker 기반 가상 샌드박스에서 페이지를
+          대신 열어 위험 요소를 보여줍니다. Gemini API로 분석 결과를 사람이 읽기 쉽게 요약합니다.
+          수업 과제로 시작했지만 결과물의 필요성을 논문 형태로 정리해
+          <strong>한국정보통신학회 춘계종합학술대회</strong>에서 발표했습니다.
         </p>
-        <p>QLoRA &middot; FAISS &middot; BM25 &middot; RAG &middot; Python</p>
-        <a href="https://github.com/gusn9719/gemma4-t17-rag-finetuning" target="_blank">GitHub</a>
-      </article>
+        <div class="pill-row" style="margin-bottom: 14px">
+          <span class="pill">FastAPI</span>
+          <span class="pill">Docker</span>
+          <span class="pill">Playwright</span>
+          <span class="pill">Gemini API</span>
+          <span class="pill">Flutter</span>
+        </div>
+        <div class="card-links"><a href="https://github.com/gusn9719/security_hub" target="_blank">GitHub →</a></div>
+      </div>
 
-      <article>
-        <h2>WebCrawling</h2>
-        <p>2026년 2학년 1학기 웹크롤링 프로젝트</p>
+      <div class="card">
+        <div class="card-header">
+          <h3>Gemma4 T17 RAG Fine-tuning</h3>
+        </div>
         <p>
-          올리브영 등 이커머스 사이트를 크롤링해 상품 데이터를 수집하고, 이를 정제·가공해 추천 점수 테이블을
-          만드는 데이터 파이프라인입니다.
+          서비스 매뉴얼 QA를 위해 Gemma4 모델을 QLoRA로 파인튜닝하고, FAISS + BM25 하이브리드 검색으로
+          문서를 찾아 답하는 RAG 파이프라인을 구축했습니다. PDF 매뉴얼을 텍스트/이미지 청크로 인덱싱해
+          파인튜닝한 모델과 결합, 정확한 근거 기반 답변을 생성합니다.
         </p>
-        <p>Python &middot; Web Crawling &middot; Data Pipeline</p>
-        <a href="https://github.com/gusn9719/WebCrawling" target="_blank">GitHub</a>
-      </article>
+        <div class="pill-row" style="margin-bottom: 14px">
+          <span class="pill">QLoRA</span>
+          <span class="pill">FAISS</span>
+          <span class="pill">BM25</span>
+          <span class="pill">RAG</span>
+          <span class="pill">Python</span>
+        </div>
+        <div class="card-links">
+          <a href="https://github.com/gusn9719/gemma4-t17-rag-finetuning" target="_blank">GitHub →</a>
+        </div>
+      </div>
 
-      <article>
-        <h2>decadive</h2>
-        <p>80~90년대 레트로 굿즈 쇼핑몰 (1학년 2학기 기말 웹 프로젝트)</p>
+      <div class="card">
+        <div class="card-header">
+          <h3>WebCrawling</h3>
+        </div>
         <p>
-          Spring 없이 서블릿 기반 MVC 프레임워크(DispatcherServlet, HandlerMapping)를 직접 구현하여 상품 조회,
-          장바구니, 회원 관리, 관리자 페이지를 만든 프로젝트입니다.
+          이커머스 사이트를 크롤링해 상품 데이터를 수집하고, 이를 정제·가공해 추천 점수 테이블을 만드는
+          데이터 파이프라인입니다. 2학년 1학기 웹크롤링 프로젝트로 시작했습니다.
         </p>
-        <p>Java &middot; Servlet/JSP &middot; MyBatis &middot; Oracle</p>
-        <a href="https://github.com/gusn9719/decadive" target="_blank">GitHub</a>
-      </article>
+        <div class="pill-row" style="margin-bottom: 14px">
+          <span class="pill">Python</span>
+          <span class="pill">Web Crawling</span>
+          <span class="pill">Data Pipeline</span>
+        </div>
+        <div class="card-links"><a href="https://github.com/gusn9719/WebCrawling" target="_blank">GitHub →</a></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>decadive</h3>
+        </div>
+        <p>
+          80~90년대 레트로 굿즈 쇼핑몰입니다. Spring 없이 서블릿 기반 MVC 프레임워크(DispatcherServlet,
+          HandlerMapping)를 직접 구현해 상품 조회, 장바구니, 회원 관리, 관리자 페이지를 만들었습니다.
+        </p>
+        <div class="pill-row" style="margin-bottom: 14px">
+          <span class="pill">Java</span>
+          <span class="pill">Servlet / JSP</span>
+          <span class="pill">MyBatis</span>
+          <span class="pill">Oracle</span>
+        </div>
+        <div class="card-links"><a href="https://github.com/gusn9719/decadive" target="_blank">GitHub →</a></div>
+      </div>
     </section>
 
-    <footer>Copyright &copy; Hyunwoo Lim 2025</footer>
+    <footer>
+      <span>&copy; 2026 Hyunwoo Lim</span>
+      <div class="socials">
+        <a href="https://github.com/gusn9719" target="_blank">GitHub</a>
+        <a href="https://www.acmicpc.net/user/gusn9719" target="_blank">BOJ</a>
+        <a href="mailto:gusn9719@gmail.com">Email</a>
+      </div>
+    </footer>
   </body>
 </html>
