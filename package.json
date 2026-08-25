@@ -1,0 +1,27 @@
+{
+  "name": "gusn9719-portfolio",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "pretest": "astro build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "validate:html": "html-validate \"dist/**/*.html\"",
+    "validate:links": "linkinator dist --recurse --check-css --check-fragments --skip gusn9719.github.io/projects",
+    "verify": "npm run check && npm test && npm run validate:html && npm run validate:links"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@types/node": "^24.13.3",
+    "astro": "^7.2.6",
+    "html-validate": "^11.10.0",
+    "linkinator": "^8.0.4",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.11"
+  }
+}

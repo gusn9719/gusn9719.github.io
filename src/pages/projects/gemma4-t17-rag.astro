@@ -1,0 +1,130 @@
+---
+import MetricGrid from "../../components/MetricGrid.astro";
+import ProjectLayout from "../../layouts/ProjectLayout.astro";
+import { getProjectBySlug } from "../../data/projects";
+
+const project = getProjectBySlug("gemma4-t17-rag");
+---
+
+<ProjectLayout
+  project={project}
+  description="Tennant T17 영문 서비스 매뉴얼 QA 데이터셋, text-only Gemma4 QLoRA와 Hybrid RAG의 실험 판단과 평가 한계를 정리한 Case Study입니다."
+>
+  <figure slot="lead-visual" class="project-visual project-visual--image project-visual--dark">
+    <img src="/assets/gemma/loss-curve.png" alt="Gemma4 QLoRA 학습 단계에 따른 train loss와 eval loss 변화 그래프" width="1248" height="701" decoding="async" />
+    <figcaption>저장소의 실제 loss curve. 학습이 진행된 기록이며 독립적인 일반화 성능을 증명하는 그래프로 사용하지 않습니다.</figcaption>
+  </figure>
+
+  <section class="case-section" aria-labelledby="gemma-overview">
+    <div class="case-section__title"><p>01</p><h2 id="gemma-overview">Scope</h2></div>
+    <div class="case-copy case-copy--lead">
+      <p>385쪽 Tennant T17 영문 서비스 매뉴얼을 바탕으로 질문 유형과 근거 위치를 기록한 QA 데이터를 만들고, fine-tuning과 RAG를 각각 실험했습니다. 답변이 틀렸을 때 모델 문제로 바로 결론 내리지 않고 검색 근거가 먼저 들어왔는지 분리해서 확인할 수 있도록 평가 구조를 구성했습니다.</p>
+      <div class="callout">
+        <p class="callout__label">Text-only fine-tuning</p>
+        <p>현재 QLoRA fine-tuning의 입력은 질문과 답변 텍스트뿐입니다. page render, image block, image manifest는 데이터 출처와 시각 자료를 검증하기 위해 보존했으며 multimodal fine-tuning 입력으로 사용하지 않았습니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="case-section" aria-labelledby="gemma-dataset">
+    <div class="case-section__title"><p>02</p><h2 id="gemma-dataset">Dataset Design</h2></div>
+    <div class="case-copy">
+      <MetricGrid
+        label="Gemma4 T17 데이터셋 구성"
+        metrics={[
+          { value: "360", label: "Train QA", note: "최종 학습에서 288/72 분리" },
+          { value: "84", label: "Evaluation QA", note: "12개 질문 유형" },
+          { value: "2,703", label: "Retrieval chunks", note: "FAISS · BM25 corpus" },
+          { value: "385 / 801", label: "Page / image assets", note: "출처·시각 검증용" },
+        ]}
+      />
+      <div class="case-subsection">
+        <p class="summary-label">Split boundary</p>
+        <h3>source 단위 분리와 검증을 거친 데이터셋</h3>
+        <p>같은 문서 구간의 질문과 답변이 train과 evaluation에 섞이는 일을 줄이기 위해 source unit을 기준으로 분리했습니다. question·answer·pair 중복과 source unit/image overlap, image path를 검사했습니다.</p>
+        <p class="validation-note">상위 source group 기준으로는 8개가 겹칩니다. 따라서 ‘누수 없는 데이터셋’이라고 표현하지 않습니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="case-section" aria-labelledby="gemma-finetuning">
+    <div class="case-section__title"><p>03</p><h2 id="gemma-finetuning">Fine-tuning Decision</h2></div>
+    <div class="case-copy">
+      <p class="case-emphasis">더 큰 LoRA rank가 항상 더 좋은 결과를 만든다고 가정하지 않고 validation loss와 GPU memory를 함께 비교했습니다.</p>
+      <div class="table-wrap">
+        <table>
+          <caption>대표 pilot 비교</caption>
+          <thead><tr><th scope="col">구성</th><th scope="col">Rank</th><th scope="col">Learning rate</th><th scope="col">Eval loss</th><th scope="col">판단</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Pilot B</th><td>16</td><td>3e-4</td><td>1.0143</td><td>최종 선택</td></tr>
+            <tr><th scope="row">Higher rank pilot</th><td>32</td><td>3e-4</td><td>1.0325</td><td>더 높은 loss·memory</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <MetricGrid
+        label="Gemma4 최종 fine-tuning 기록"
+        metrics={[
+          { value: "0.902", label: "Final train loss" },
+          { value: "0.8034", label: "Final validation loss" },
+          { value: "9,750.8 MB", label: "Peak GPU memory" },
+        ]}
+      />
+    </div>
+  </section>
+
+  <section class="case-section" aria-labelledby="gemma-rag">
+    <div class="case-section__title"><p>04</p><h2 id="gemma-rag">RAG Evaluation</h2></div>
+    <div class="case-copy">
+      <p>Dense retrieval과 BM25 결과를 RRF로 결합했습니다. 이후 실패 질문을 exact label, circuit breaker table, fault code, procedure step, unanswerable 유형으로 나누고 query expansion과 유형별 boost·rule extraction을 보완했습니다.</p>
+
+      <figure class="evaluation-comparison">
+        <figcaption id="retrieval-comparison-title">동일 평가셋에서 gold context 정렬과 retrieval 규칙 수정 전후 Recall@5</figcaption>
+        <div><span>정렬 전</span><div class="evaluation-bar"><i style="--value: 58.93%"></i></div><strong>0.5893</strong></div>
+        <div><span>정렬·규칙 수정 후</span><div class="evaluation-bar"><i style="--value: 92.86%"></i></div><strong>0.9286</strong></div>
+      </figure>
+
+      <div class="scope-note">
+        <h3>평가 조건</h3>
+        <p>gold context 정렬과 retrieval 규칙을 수정하며 <strong>동일한 development/evaluation set</strong>에서 확인한 개선입니다. 독립 test 성능 향상으로 해석할 수 없습니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="case-section" aria-labelledby="gemma-solving">
+    <div class="case-section__title"><p>05</p><h2 id="gemma-solving">Problem Solving</h2></div>
+    <div class="case-copy story-list">
+      <article><p class="story-list__number">01 / Evaluation alignment</p><h3>검색이 맞았는데도 실패로 계산되는 사례를 확인했습니다.</h3><p>실제 정답이 있는 source unit보다 넓은 gold context가 연결된 사례를 추적했습니다. source unit과 corpus chunk의 평가 기준을 맞춘 뒤 retrieval 규칙을 다시 비교했습니다.</p></article>
+      <article><p class="story-list__number">02 / Experiment choice</p><h3>큰 rank 대신 측정 결과가 나은 구성을 선택했습니다.</h3><p>세 pilot의 validation loss와 memory를 함께 비교해 rank 16, learning rate 3e-4 구성을 선택했습니다.</p></article>
+      <article><p class="story-list__number">03 / Unanswerable</p><h3>근거가 부족한 질문에도 답을 만드는 문제를 분리했습니다.</h3><p>unanswerable 질문을 평가셋에 포함하고 검색 점수와 prompt 규칙을 이용해 근거 부족을 알리는 경로를 추가했습니다.</p></article>
+    </div>
+  </section>
+
+  <section class="case-section" aria-labelledby="gemma-validation">
+    <div class="case-section__title"><p>06</p><h2 id="gemma-validation">Result / Validation</h2></div>
+    <div class="case-copy">
+      <MetricGrid
+        label="Gemma4 T17 RAG 평가 결과"
+        metrics={[
+          { value: "52 / 56", label: "Answerable Recall@5", note: "fixed 60 중 answerable" },
+          { value: "0.8167", label: "Gemini judge", note: "평가 모델 의존" },
+          { value: "0", label: "Question · answer · pair 중복" },
+          { value: "80", label: "QA 수동 점검", note: "수정 후 spot check" },
+        ]}
+      />
+    </div>
+  </section>
+
+  <section class="case-section case-section--limitations" aria-labelledby="gemma-limitations">
+    <div class="case-section__title"><p>07</p><h2 id="gemma-limitations">Limitations</h2></div>
+    <div class="case-copy">
+      <ul class="limitation-list">
+        <li>fixed 60문항은 실패 분석과 개선에 반복 사용해 독립적인 최종 test set이 아닙니다.</li>
+        <li>QA는 385쪽 중 95쪽에 집중되어 있고 301–385쪽에는 QA가 없습니다.</li>
+        <li>상위 source group 8개가 train/evaluation에 함께 존재합니다.</li>
+        <li>OCR, 병합 표, 이미지 연결에는 추가 검증이 필요합니다.</li>
+        <li>Gemini judge는 평가 모델에 의존하며, 긴 procedure는 1,024 token 제한에서 잘릴 수 있습니다.</li>
+      </ul>
+      <a class="text-link source-link" href="https://github.com/gusn9719/gemma4-t17-rag-finetuning" target="_blank" rel="noopener noreferrer">실험 기록과 평가 파일 보기 <span aria-hidden="true">↗</span></a>
+    </div>
+  </section>
+</ProjectLayout>

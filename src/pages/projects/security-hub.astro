@@ -1,0 +1,144 @@
+---
+import MetricGrid from "../../components/MetricGrid.astro";
+import ProjectLayout from "../../layouts/ProjectLayout.astro";
+import { getProjectBySlug } from "../../data/projects";
+
+const project = getProjectBySlug("security-hub");
+---
+
+<ProjectLayout
+  project={project}
+  description="의심 URL을 열기 전에 분석하고 필요하면 격리 브라우저에서 확인하는 Security Hub의 문제 정의, 임현우의 기여, 검증과 한계를 정리한 Case Study입니다."
+>
+  <figure slot="lead-visual" class="project-visual project-visual--video">
+    <video controls preload="metadata" aria-describedby="security-demo-caption">
+      <source src="/assets/security-hub/demo-suspicious-direct-browse.mp4" type="video/mp4" />
+      브라우저가 영상을 지원하지 않습니다.
+    </video>
+    <figcaption id="security-demo-caption">의심 URL 분석 결과에서 격리된 직접 탐방 브라우저로 이동하는 실제 시연입니다. 영상은 자동 재생하지 않습니다.</figcaption>
+  </figure>
+
+  <section class="case-section" aria-labelledby="security-overview">
+    <div class="case-section__title"><p>01</p><h2 id="security-overview">Overview</h2></div>
+    <div class="case-copy case-copy--lead">
+      <p>스미싱 문자를 받았을 때 사용자는 링크의 안전 여부를 확인하고 싶어도 직접 열어보는 행동 자체가 위험할 수 있습니다. Security Hub는 링크를 먼저 분석하고, 판정이 애매하면 실제 기기 밖의 격리 환경에서 확인하도록 사용자 흐름을 구성했습니다.</p>
+      <p>프로젝트와 관련해 한국정보통신학회 춘계종합학술대회에서 발표했습니다. 이 발표는 Portfolio의 두 수상 이력과 별개입니다.</p>
+      <div class="callout">
+        <p class="callout__label">Classification boundary</p>
+        <p>핵심 위험 판정은 생성형 AI가 아니라 규칙, 목록, 도메인 평판과 가중 휴리스틱 신호를 사용합니다. Gemini는 자동 테스트 결과를 읽기 쉬운 문장으로 설명하는 보조 역할만 담당합니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="case-section" aria-labelledby="security-flow">
+    <div class="case-section__title"><p>02</p><h2 id="security-flow">System Flow</h2></div>
+    <div class="case-copy">
+      <ol class="process-flow">
+        <li><span>01</span><strong>URL 받기</strong><p>직접 입력, 공유, 클립보드, 메시지 선택, SMS 알림</p></li>
+        <li><span>02</span><strong>다신호 분석</strong><p>목록·도메인 평판·25개 휴리스틱 신호와 가중 점수</p></li>
+        <li><span>03</span><strong>위험도 제시</strong><p>SAFE · SUSPICIOUS · DANGER와 판단 근거</p></li>
+        <li><span>04</span><strong>격리 확인</strong><p>필요한 경우 기기 밖의 가상 브라우저로 이동</p></li>
+      </ol>
+
+      <figure class="inline-visual inline-visual--architecture">
+        <img
+          src="/assets/security-hub/system-architecture.png"
+          alt="Flutter 앱, FastAPI 서비스, 분석 모듈, 데이터베이스와 Sandbox의 관계를 나타낸 Security Hub 시스템 구성도"
+          width="1167"
+          height="814"
+          loading="lazy"
+          decoding="async"
+        />
+        <figcaption>현재 repository의 시스템 구성도. 입력, 분석 API, 외부 조회, Sandbox와 데이터 계층의 관계를 보여줍니다.</figcaption>
+      </figure>
+
+      <figure class="inline-visual inline-visual--architecture">
+        <img
+          src="/assets/security-hub/erd.svg"
+          alt="사용자, 분석 기록, URL 평가, 즐겨찾기와 Sandbox 세션의 관계를 나타낸 Security Hub ERD"
+          width="990"
+          height="750"
+          loading="lazy"
+          decoding="async"
+        />
+        <figcaption>현재 repository의 ERD. 분석 결과를 사용자 기록과 Sandbox session에 연결하는 데이터 구조를 보여줍니다.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="case-section" aria-labelledby="security-contribution">
+    <div class="case-section__title"><p>03</p><h2 id="security-contribution">My Contribution</h2></div>
+    <div class="case-copy">
+      <p class="case-emphasis">아이디어와 사용자 흐름을 구상하고, Flutter 주요 기능과 FastAPI 연동·보완 작업을 통해 분석에서 격리 확인까지 이어지는 전체 사용 흐름을 연결했습니다.</p>
+      <ul class="evidence-list">
+        <li><strong>Flutter</strong><span>URL 입력·분석 결과·직접 탐방으로 이어지는 주요 UI와 Kakao 로그인 흐름</span></li>
+        <li><strong>FastAPI</strong><span>인증 route, 분석 API 연동과 시스템 통합</span></li>
+        <li><strong>Analysis</strong><span>휴리스틱 신호 확장, 다중 URL 판정 흐름과 단축 URL 오탐 보완</span></li>
+        <li><strong>Security</strong><span>obfuscated IP, userinfo 입력 검증과 Sandbox hardening 테스트 참여</span></li>
+      </ul>
+      <div class="scope-note">
+        <h3>개인 기여 범위</h3>
+        <p>Sandbox 전체, 팀 전체 Backend, 팀 전체 데이터 구축을 제 개인 성과로 포함하지 않습니다. 위 항목은 README의 역할표만이 아니라 실제 commit과 문서에서 확인할 수 있는 구체 작업을 기준으로 정리했습니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="case-section" aria-labelledby="security-decisions">
+    <div class="case-section__title"><p>04</p><h2 id="security-decisions">Key Decisions</h2></div>
+    <div class="case-copy decision-list">
+      <article><p>Decision 01</p><h3>판정과 설명을 분리했습니다.</h3><p>생성형 AI 응답에 따라 위험 등급이 달라지지 않도록, 판정은 확인 가능한 신호로 구성하고 AI는 결과 설명에만 사용했습니다.</p></article>
+      <article><p>Decision 02</p><h3>단일 신호로 위험을 확정하지 않았습니다.</h3><p>한 가지 URL 특성 때문에 정상 사이트가 DANGER가 되는 일을 줄이기 위해 복수 신호와 가중 점수를 사용했습니다.</p></article>
+      <article><p>Decision 03</p><h3>사용자 투표만으로 SAFE가 되지 않게 했습니다.</h3><p>안전 투표는 경고 점수를 낮출 수 있지만 whitelist 근거가 없으면 SAFE로 바꾸지 않습니다.</p></article>
+    </div>
+  </section>
+
+  <section class="case-section" aria-labelledby="security-solving">
+    <div class="case-section__title"><p>05</p><h2 id="security-solving">Problem Solving</h2></div>
+    <div class="case-copy story-list">
+      <article>
+        <p class="story-list__number">01 / Aggregation</p>
+        <h3>첫 URL이 안전하면 뒤의 위험 URL을 검사하지 않던 문제</h3>
+        <p>한 입력에 여러 URL이 포함됐을 때 첫 URL이 whitelist에 있다는 이유로 전체 입력이 SAFE로 끝날 수 있었습니다. 반환 시점과 URL 순회 흐름을 확인한 뒤 모든 URL 결과를 모아 가장 높은 위험도를 최종 결과로 사용하도록 수정했습니다.</p>
+      </article>
+      <article>
+        <p class="story-list__number">02 / Normalization</p>
+        <h3>같은 목적지를 다르게 표현하는 입력과 URL 단축 서비스 오탐</h3>
+        <p>decimal·hex·octal IP와 <code>%40</code> userinfo 입력을 재현해 host 정규화와 검증을 보완했습니다. 반대로 단축 서비스 provider 자체가 위험 도메인으로 잡히는 문제는 실제 이동 목적지와 구분해 처리했습니다.</p>
+      </article>
+      <article>
+        <p class="story-list__number">03 / Measurement</p>
+        <h3>Cache 때문에 부하 테스트가 성공한 것처럼 보인 문제</h3>
+        <p>동일 URL이 24시간 cache에 들어간 사실과 query가 cache hash에서 제외된 것을 확인했습니다. 고유 path로 다시 측정해 100명 수준의 결과와 1,000명에서 드러난 single-worker 한계를 분리해 기록했습니다.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="case-section" aria-labelledby="security-validation">
+    <div class="case-section__title"><p>06</p><h2 id="security-validation">Validation</h2></div>
+    <div class="case-copy">
+      <MetricGrid
+        label="Security Hub 검증 결과"
+        metrics={[
+          { value: "200 / 200", label: "위험 URL 탐지", note: "독립 holdout 250건 중 위험 URL" },
+          { value: "50 / 50", label: "안전 URL 판정", note: "동일 holdout의 안전 URL" },
+          { value: "710.9 ms", label: "100명 동시 요청 p95", note: "모든 요청 2xx" },
+          { value: "11 / 11", label: "Hardening 시도 차단", note: "알려진 container escape 테스트" },
+        ]}
+      />
+      <p class="validation-note">평가 수치는 조건과 함께 읽어야 합니다. URL 확장과 외부 평판 조회 일부는 mock 처리했으며, 100%라는 숫자를 일반화된 탐지 정확도로 사용하지 않습니다.</p>
+    </div>
+  </section>
+
+  <section class="case-section case-section--limitations" aria-labelledby="security-limitations">
+    <div class="case-section__title"><p>07</p><h2 id="security-limitations">Limitations</h2></div>
+    <div class="case-copy">
+      <ul class="limitation-list">
+        <li>정확도 holdout은 250건으로 제한적이며 외부 네트워크 일부를 mock 처리했습니다.</li>
+        <li>1,000명 부하 테스트에서는 개발용 single-worker 서버가 응답하지 못했습니다.</li>
+        <li>실제 피싱 URL 10개 중 9개가 이미 종료됐고, 남은 1개에서도 신호가 나오지 않아 7-B를 검증된 피싱 탐지기로 표현할 수 없습니다.</li>
+        <li>11개 hardening 테스트 통과는 알려진 escape 시도를 막았다는 뜻이며 kernel 취약점이나 0-day 안전성을 증명하지 않습니다.</li>
+      </ul>
+      <a class="text-link source-link" href="https://github.com/gusn9719/security_hub/tree/main/docs" target="_blank" rel="noopener noreferrer">평가 문서 전체 보기 <span aria-hidden="true">↗</span></a>
+    </div>
+  </section>
+</ProjectLayout>

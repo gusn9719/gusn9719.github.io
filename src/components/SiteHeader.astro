@@ -1,0 +1,25 @@
+---
+interface Props {
+  compact?: boolean;
+}
+
+const { compact = false } = Astro.props;
+---
+
+<header class:list={["site-header", { "site-header--compact": compact }] }>
+  <div class="site-header__inner">
+    <a class="site-mark" href="/" aria-label="임현우 포트폴리오 홈">HW.</a>
+    <nav aria-label="주요 메뉴">
+      <a href="/#projects">Projects</a>
+      <a href="/#about">About</a>
+      <a href="/#education">Education</a>
+      <a href="/#contact">Contact</a>
+      <a
+        class="nav-external"
+        href="https://github.com/gusn9719"
+        target="_blank"
+        rel="noopener noreferrer"
+      >GitHub <span aria-hidden="true">↗</span></a>
+    </nav>
+  </div>
+</header>

@@ -1,0 +1,55 @@
+---
+import type { Project } from "../data/projects";
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+---
+
+<article class="project-row" aria-labelledby={`${project.slug}-title`}>
+  <div class="project-row__index" aria-hidden="true">{project.order}</div>
+  <div class="project-row__body">
+    <div class="project-row__heading">
+      <div>
+        <p class="eyebrow">{project.type}</p>
+        <h3 id={`${project.slug}-title`}>{project.title}</h3>
+      </div>
+      <p class="project-row__context">{project.context}</p>
+    </div>
+
+    <div class="project-row__summary">
+      <div>
+        <p class="summary-label">Problem</p>
+        <p>{project.problem}</p>
+      </div>
+      <div>
+        <p class="summary-label">Built</p>
+        <p>{project.result}</p>
+      </div>
+      <div>
+        <p class="summary-label">Contribution</p>
+        <p>{project.contribution}</p>
+      </div>
+    </div>
+
+    <div class="project-row__footer">
+      <ul class="inline-list">
+        {project.stack.map((item) => <li>{item}</li>)}
+      </ul>
+      <div class="project-links">
+        {project.links.map((link) => (
+          <a
+            class:list={["text-link", { "text-link--primary": link.kind === "detail" }]}
+            href={link.href}
+            target={link.kind === "detail" ? undefined : "_blank"}
+            rel={link.kind === "detail" ? undefined : "noopener noreferrer"}
+          >
+            {link.label} <span aria-hidden="true">{link.kind === "detail" ? "→" : "↗"}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</article>

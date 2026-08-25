@@ -1,0 +1,67 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import { projects, type Project } from "../data/projects";
+
+interface Props {
+  project: Project;
+  description: string;
+}
+
+const { project, description } = Astro.props;
+const projectIndex = projects.findIndex((candidate) => candidate.slug === project.slug);
+const nextProject = projects[(projectIndex + 1) % projects.length];
+---
+
+<BaseLayout title={`${project.title} | 임현우 Portfolio`} description={description} compactHeader>
+  <article class="case-study">
+    <header class="project-hero">
+      <a class="back-link" href="/#projects"><span aria-hidden="true">←</span> Home으로 돌아가기</a>
+      <div class="project-hero__heading">
+        <div>
+          <p class="eyebrow">{project.order} · {project.type}</p>
+          <h1>{project.title}</h1>
+        </div>
+        <p class="project-hero__context">{project.context}</p>
+      </div>
+      <p class="project-hero__lede">{project.problem}</p>
+
+      <dl class="project-meta">
+        <div>
+          <dt>Type</dt>
+          <dd>{project.context}</dd>
+        </div>
+        <div>
+          <dt>My role</dt>
+          <dd>{project.role}</dd>
+        </div>
+        <div>
+          <dt>Core tools</dt>
+          <dd>{project.stack.join(" · ")}</dd>
+        </div>
+      </dl>
+
+      <div class="project-actions">
+        {project.links.filter((link) => link.kind !== "detail").map((link) => (
+          <a class="button" href={link.href} target="_blank" rel="noopener noreferrer">
+            {link.label} <span aria-hidden="true">↗</span>
+          </a>
+        ))}
+      </div>
+    </header>
+
+    <slot name="lead-visual" />
+
+    <div class="case-content">
+      <slot />
+    </div>
+
+    <nav class="next-project" aria-label="다음 프로젝트">
+      <p>Next Case Study</p>
+      <a href={`/projects/${nextProject.slug}/`}>
+        <span>{nextProject.order}</span>
+        <strong>{nextProject.title}</strong>
+        <span aria-hidden="true">→</span>
+      </a>
+    </nav>
+  </article>
+</BaseLayout>
