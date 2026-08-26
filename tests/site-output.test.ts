@@ -61,6 +61,19 @@ describe("정적 사이트 출력", () => {
     expect(html).toContain("BiLSTM prediction 기반 집계");
   });
 
+  it("BeautyLens ERD를 원본 비율로 반응형 출력한다", async () => {
+    const html = await readBuiltPage("projects/reviewfit-beautylens/index.html");
+    const image = html.match(/<img\b[^>]*beautylens-erd\.svg[^>]*>/i)?.[0];
+    const cssHref = html.match(/<link\b[^>]*href="([^"]+\.css)"[^>]*>/i)?.[1];
+
+    expect(image).toContain('width="1440"');
+    expect(image).toContain('height="1050"');
+    expect(cssHref).toBeTruthy();
+
+    const css = await readFile(join(process.cwd(), "dist", cssHref!.replace(/^\//, "")), "utf8");
+    expect(css).toMatch(/\.inline-visual--diagram img\{[^}]*height:auto/);
+  });
+
   it("Gemma 개선 수치에 동일 평가셋 조건을 함께 출력한다", async () => {
     const html = await readBuiltPage("projects/gemma4-t17-rag/index.html");
 

@@ -671,6 +671,10 @@ h4 {
   background: #fff;
 }
 
+.inline-visual--diagram img {
+  height: auto;
+}
+
 .project-visual--video video {
   background: #111;
 }

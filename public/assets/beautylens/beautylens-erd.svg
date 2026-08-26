@@ -1,121 +1,204 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1320" height="900" viewBox="0 0 1320 900">
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1050" viewBox="0 0 1440 1050" role="img" aria-labelledby="erd-title erd-desc">
+  <title id="erd-title">BeautyLens 핵심 데이터 관계</title>
+  <desc id="erd-desc">계정, 상품, 사용자 피드백, 운영 영역의 핵심 테이블을 보여준다. 실제 외래 키는 실선, 애플리케이션 수준 관계는 점선이며 모든 관계선은 테이블 바깥에서 직각으로 연결된다.</desc>
   <defs>
     <style>
-      .bg { fill:#f7f8fa; }
-      .box { fill:#ffffff; stroke:#2f3b45; stroke-width:1.5; rx:8; }
-      .core { fill:#eef6ff; }
-      .activity { fill:#f4fff2; }
-      .admin { fill:#fff6e8; }
-      .face { fill:#f7f0ff; }
-      .title { font-family:Arial, sans-serif; font-size:15px; font-weight:700; fill:#20252b; }
-      .text { font-family:Arial, sans-serif; font-size:12px; fill:#34424f; }
-      .rel { stroke:#5a6b78; stroke-width:1.4; fill:none; marker-end:url(#arrow); }
-      .note { font-family:Arial, sans-serif; font-size:13px; fill:#20252b; font-weight:700; }
+      .canvas { fill: #f7f8fa; }
+      .area { fill: #ffffff; stroke: #d7dde3; stroke-width: 1; }
+      .area-operations { fill: #fffaf1; stroke: #e3d7c5; stroke-width: 1; }
+      .table { fill: #ffffff; stroke: #344554; stroke-width: 1.5; }
+      .table-account { fill: #f4f0fb; }
+      .table-feedback { fill: #f1f7f3; }
+      .table-product { fill: #eef5fb; }
+      .table-operation { fill: #fff6e8; }
+      .table-header { fill: #344554; }
+      .page-title { font-family: "Segoe UI", Arial, sans-serif; font-size: 23px; font-weight: 700; fill: #1f2b33; }
+      .page-subtitle { font-family: "Segoe UI", Arial, sans-serif; font-size: 13.5px; fill: #566570; }
+      .area-title { font-family: "Segoe UI", Arial, sans-serif; font-size: 14px; font-weight: 700; fill: #586874; letter-spacing: 0.08em; }
+      .table-title { font-family: "Segoe UI", Arial, sans-serif; font-size: 16px; font-weight: 700; fill: #ffffff; }
+      .column { font-family: Consolas, "Courier New", monospace; font-size: 14px; fill: #263640; }
+      .column-key { font-weight: 700; fill: #173f5f; }
+      .column-logical { font-weight: 700; fill: #8b3f32; }
+      .relation-fk { fill: none; stroke: #34506d; stroke-width: 2; stroke-linejoin: miter; stroke-linecap: square; }
+      .relation-logical { fill: none; stroke: #a34d3f; stroke-width: 2; stroke-dasharray: 8 6; stroke-linejoin: miter; stroke-linecap: square; }
+      .port-fk { fill: #ffffff; stroke: #34506d; stroke-width: 2; }
+      .port-logical { fill: #ffffff; stroke: #a34d3f; stroke-width: 2; }
+      .relation-label { font-family: "Segoe UI", Arial, sans-serif; font-size: 12px; font-weight: 600; fill: #40515e; }
+      .relation-label-logical { fill: #8b3f32; }
+      .legend { fill: #ffffff; stroke: #cfd6dc; stroke-width: 1; }
+      .legend-text { font-family: "Segoe UI", Arial, sans-serif; font-size: 12.5px; fill: #40515e; }
+      .scope-note { font-family: "Segoe UI", Arial, sans-serif; font-size: 12.5px; fill: #667681; }
     </style>
-    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
-      <path d="M0,0 L0,6 L9,3 z" fill="#5a6b78"/>
-    </marker>
   </defs>
-  <rect class="bg" x="0" y="0" width="1320" height="900"/>
-  <text class="note" x="40" y="38">BeautyLens 핵심 ERD: 실제 FK 제약조건과 MyBatis JOIN 기준 논리 관계를 함께 정리</text>
 
-  <rect class="box core" x="60" y="90" width="230" height="150"/>
-  <text class="title" x="80" y="120">BL_MEMBERS</text>
-  <text class="text" x="80" y="148">PK MEMBER_ID</text>
-  <text class="text" x="80" y="170">LOGIN_ID, PASSWORD</text>
-  <text class="text" x="80" y="192">NICKNAME, SKIN_TYPE</text>
-  <text class="text" x="80" y="214">SKIN_CONCERN, ROLE</text>
+  <rect class="canvas" x="0" y="0" width="1440" height="1050"/>
+  <text class="page-title" x="48" y="42">BeautyLens 핵심 데이터 관계</text>
+  <text class="page-subtitle" x="48" y="68">읽기 쉬운 핵심 흐름만 표시하며, 생략한 FK와 logical relation은 DB 문서의 relationship table에서 설명합니다.</text>
 
-  <rect class="box core" x="545" y="90" width="260" height="190"/>
-  <text class="title" x="565" y="120">BL_PRODUCTS</text>
-  <text class="text" x="565" y="148">PK PRODUCT_ID</text>
-  <text class="text" x="565" y="170">PRODUCT_KEY, PLATFORM</text>
-  <text class="text" x="565" y="192">PRODUCT_NAME, BRAND</text>
-  <text class="text" x="565" y="214">IMAGE_URL, PRODUCT_URL</text>
-  <text class="text" x="565" y="236">RECOMMENDATION_SCORE</text>
-  <text class="text" x="565" y="258">CAUTION_LEVEL, BASE_SKIN_TYPE</text>
+  <g aria-label="관계선 범례">
+    <rect class="legend" x="935" y="22" width="445" height="62" rx="6"/>
+    <path class="relation-fk" d="M958 43 H1022"/>
+    <circle class="port-fk" cx="958" cy="43" r="3.5"/>
+    <circle class="port-fk" cx="1022" cy="43" r="3.5"/>
+    <text class="legend-text" x="1038" y="47">실제 FK · solid line</text>
+    <path class="relation-logical" d="M958 65 H1022"/>
+    <circle class="port-logical" cx="958" cy="65" r="3.5"/>
+    <circle class="port-logical" cx="1022" cy="65" r="3.5"/>
+    <text class="legend-text" x="1038" y="69">Logical/application relation · dashed line</text>
+  </g>
 
-  <rect class="box core" x="1010" y="90" width="240" height="145"/>
-  <text class="title" x="1030" y="120">BL_REVIEWS</text>
-  <text class="text" x="1030" y="148">PK REVIEW_ID</text>
-  <text class="text" x="1030" y="170">FK PRODUCT_ID</text>
-  <text class="text" x="1030" y="192">REVIEW_TEXT, RATING</text>
-  <text class="text" x="1030" y="214">SENTIMENT_LABEL</text>
+  <rect class="area" x="30" y="104" width="340" height="586" rx="10"/>
+  <rect class="area" x="550" y="104" width="340" height="586" rx="10"/>
+  <rect class="area" x="1070" y="104" width="340" height="586" rx="10"/>
+  <rect class="area-operations" x="30" y="720" width="1380" height="290" rx="10"/>
 
-  <rect class="box activity" x="60" y="330" width="230" height="130"/>
-  <text class="title" x="80" y="360">BL_PRODUCT_FAVORITES</text>
-  <text class="text" x="80" y="388">PK FAVORITE_ID</text>
-  <text class="text" x="80" y="410">FK MEMBER_ID</text>
-  <text class="text" x="80" y="432">FK PRODUCT_ID</text>
+  <text class="area-title" x="60" y="132">계정</text>
+  <text class="area-title" x="580" y="132">사용자 피드백</text>
+  <text class="area-title" x="1100" y="132">상품</text>
+  <text class="area-title" x="60" y="756">운영</text>
 
-  <rect class="box activity" x="340" y="330" width="230" height="150"/>
-  <text class="title" x="360" y="360">BL_PRODUCT_RATINGS</text>
-  <text class="text" x="360" y="388">PK RATING_ID</text>
-  <text class="text" x="360" y="410">FK MEMBER_ID, PRODUCT_ID</text>
-  <text class="text" x="360" y="432">RATING, IRRITATION_YN</text>
-  <text class="text" x="360" y="454">REPURCHASE_YN</text>
+  <!-- Actual FK: BL_MEMBERS.MEMBER_ID -> BL_PRODUCT_RATINGS.MEMBER_ID -->
+  <path class="relation-fk" d="M340 235 H580"/>
+  <circle class="port-fk" cx="340" cy="235" r="4"/>
+  <circle class="port-fk" cx="580" cy="235" r="4"/>
+  <text class="relation-label" x="412" y="226">MEMBER_ID · FK</text>
 
-  <rect class="box activity" x="620" y="330" width="250" height="150"/>
-  <text class="title" x="640" y="360">BL_USER_PRODUCT_EVENTS</text>
-  <text class="text" x="640" y="388">PK EVENT_ID</text>
-  <text class="text" x="640" y="410">FK MEMBER_ID, PRODUCT_ID</text>
-  <text class="text" x="640" y="432">EVENT_TYPE</text>
-  <text class="text" x="640" y="454">CREATED_AT</text>
+  <!-- Actual FK: BL_PRODUCTS.PRODUCT_ID -> BL_PRODUCT_RATINGS.PRODUCT_ID -->
+  <path class="relation-fk" d="M1100 235 H860"/>
+  <circle class="port-fk" cx="1100" cy="235" r="4"/>
+  <circle class="port-fk" cx="860" cy="235" r="4"/>
+  <text class="relation-label" x="932" y="226">PRODUCT_ID · FK</text>
 
-  <rect class="box activity" x="920" y="330" width="270" height="150"/>
-  <text class="title" x="940" y="360">BL_RECOMMENDATION_FEEDBACK</text>
-  <text class="text" x="940" y="388">PK FEEDBACK_ID</text>
-  <text class="text" x="940" y="410">FK MEMBER_ID, PRODUCT_ID</text>
-  <text class="text" x="940" y="432">LIKE / DISLIKE</text>
-  <text class="text" x="940" y="454">NOT_INTERESTED</text>
+  <!-- Actual FK: BL_MEMBERS.MEMBER_ID -> BL_FACE_CREDENTIALS.MEMBER_ID -->
+  <path class="relation-fk" d="M180 330 V470"/>
+  <circle class="port-fk" cx="180" cy="330" r="4"/>
+  <circle class="port-fk" cx="180" cy="470" r="4"/>
+  <text class="relation-label" x="192" y="404">MEMBER_ID · FK/UQ</text>
 
-  <rect class="box activity" x="340" y="560" width="250" height="150"/>
-  <text class="title" x="360" y="590">BL_PRODUCT_COMMENTS</text>
-  <text class="text" x="360" y="618">PK COMMENT_ID</text>
-  <text class="text" x="360" y="640">FK MEMBER_ID, PRODUCT_ID</text>
-  <text class="text" x="360" y="662">CONTENT, STATUS</text>
-  <text class="text" x="360" y="684">DELETED_AT, DELETE_REASON</text>
+  <!-- Actual FK: BL_PRODUCTS.PRODUCT_ID -> BL_REVIEWS.PRODUCT_ID -->
+  <path class="relation-fk" d="M1240 350 V470"/>
+  <circle class="port-fk" cx="1240" cy="350" r="4"/>
+  <circle class="port-fk" cx="1240" cy="470" r="4"/>
+  <text class="relation-label" x="1252" y="414">PRODUCT_ID · FK</text>
 
-  <rect class="box activity" x="650" y="560" width="250" height="150"/>
-  <text class="title" x="670" y="590">BL_COMMENT_REPORTS</text>
-  <text class="text" x="670" y="618">PK REPORT_ID</text>
-  <text class="text" x="670" y="640">FK COMMENT_ID</text>
-  <text class="text" x="670" y="662">FK REPORTER_ID</text>
-  <text class="text" x="670" y="684">STATUS, HANDLED_BY</text>
+  <!-- Logical relation: BL_MEMBERS.MEMBER_ID -> BL_PRODUCT_COMMENTS.DELETED_BY -->
+  <path class="relation-logical" d="M290 330 V370 H710 V470"/>
+  <circle class="port-logical" cx="290" cy="330" r="4"/>
+  <circle class="port-logical" cx="710" cy="470" r="4"/>
+  <text class="relation-label relation-label-logical" x="430" y="362">DELETED_BY · application</text>
 
-  <rect class="box admin" x="980" y="560" width="260" height="150"/>
-  <text class="title" x="1000" y="590">BL_PRODUCT_ADMIN_FLAGS</text>
-  <text class="text" x="1000" y="618">PK/FK PRODUCT_ID</text>
-  <text class="text" x="1000" y="640">IS_VISIBLE</text>
-  <text class="text" x="1000" y="662">EXCLUDE_RECOMMENDATION</text>
-  <text class="text" x="1000" y="684">QUALITY_STATUS, ADMIN_MEMO</text>
+  <!-- Actual FK: BL_MEMBERS.MEMBER_ID -> BL_PRODUCT_COMMENTS.MEMBER_ID -->
+  <path class="relation-fk" d="M250 330 V390 H650 V470"/>
+  <circle class="port-fk" cx="250" cy="330" r="4"/>
+  <circle class="port-fk" cx="650" cy="470" r="4"/>
+  <text class="relation-label" x="423" y="414">MEMBER_ID · FK</text>
 
-  <rect class="box face" x="60" y="560" width="230" height="150"/>
-  <text class="title" x="80" y="590">BL_FACE_CREDENTIALS</text>
-  <text class="text" x="80" y="618">PK FACE_ID</text>
-  <text class="text" x="80" y="640">FK MEMBER_ID</text>
-  <text class="text" x="80" y="662">FACE_EMBEDDING</text>
-  <text class="text" x="80" y="684">FACE_ENABLED</text>
+  <!-- Actual FK: BL_PRODUCTS.PRODUCT_ID -> BL_PRODUCT_COMMENTS.PRODUCT_ID -->
+  <path class="relation-fk" d="M1100 300 H980 V570 H860"/>
+  <circle class="port-fk" cx="1100" cy="300" r="4"/>
+  <circle class="port-fk" cx="860" cy="570" r="4"/>
+  <text class="relation-label" x="876" y="561">PRODUCT_ID · FK</text>
 
-  <rect class="box admin" x="980" y="750" width="260" height="105"/>
-  <text class="title" x="1000" y="780">BL_ADMIN_AUDIT_LOGS</text>
-  <text class="text" x="1000" y="808">PK LOG_ID, FK ADMIN_ID</text>
-  <text class="text" x="1000" y="830">ACTION_TYPE, TARGET_TYPE</text>
+  <!-- Actual FK: BL_PRODUCT_COMMENTS.COMMENT_ID -> BL_COMMENT_REPORTS.COMMENT_ID -->
+  <path class="relation-fk" d="M720 670 V790"/>
+  <circle class="port-fk" cx="720" cy="670" r="4"/>
+  <circle class="port-fk" cx="720" cy="790" r="4"/>
+  <text class="relation-label" x="732" y="738">COMMENT_ID · FK</text>
 
-  <path class="rel" d="M290 165 L545 165"/>
-  <path class="rel" d="M805 165 L1010 165"/>
-  <path class="rel" d="M175 240 L175 330"/>
-  <path class="rel" d="M290 395 L545 230"/>
-  <path class="rel" d="M175 240 L455 330"/>
-  <path class="rel" d="M570 405 L620 405"/>
-  <path class="rel" d="M745 330 L700 280"/>
-  <path class="rel" d="M290 165 L1055 330"/>
-  <path class="rel" d="M920 405 L805 235"/>
-  <path class="rel" d="M175 240 L465 560"/>
-  <path class="rel" d="M465 560 L640 280"/>
-  <path class="rel" d="M590 635 L650 635"/>
-  <path class="rel" d="M775 560 L290 180"/>
-  <path class="rel" d="M980 635 L805 220"/>
-  <path class="rel" d="M175 240 L175 560"/>
-  <path class="rel" d="M1110 750 L1110 710"/>
+  <!-- Actual FK: BL_PRODUCTS.PRODUCT_ID -> BL_PRODUCT_ADMIN_FLAGS.PRODUCT_ID -->
+  <path class="relation-fk" d="M1380 300 H1420 V875 H1380"/>
+  <circle class="port-fk" cx="1380" cy="300" r="4"/>
+  <circle class="port-fk" cx="1380" cy="875" r="4"/>
+  <text class="relation-label" x="1250" y="774">PRODUCT_ID · PK/FK</text>
+
+  <g role="group" aria-label="BL_MEMBERS 테이블">
+    <rect class="table table-account" x="60" y="150" width="280" height="180" rx="7"/>
+    <path class="table-header" d="M67 150 H333 Q340 150 340 157 V194 H60 V157 Q60 150 67 150 Z"/>
+    <text class="table-title" x="78" y="178">BL_MEMBERS</text>
+    <text class="column column-key" x="78" y="220">PK  MEMBER_ID</text>
+    <text class="column" x="78" y="244">LOGIN_ID, PASSWORD</text>
+    <text class="column" x="78" y="268">NICKNAME, SKIN_TYPE</text>
+    <text class="column" x="78" y="292">SKIN_CONCERN, ROLE</text>
+    <text class="column" x="78" y="316">CREATED_AT</text>
+  </g>
+
+  <g role="group" aria-label="BL_PRODUCT_RATINGS 테이블">
+    <rect class="table table-feedback" x="580" y="150" width="280" height="180" rx="7"/>
+    <path class="table-header" d="M587 150 H853 Q860 150 860 157 V194 H580 V157 Q580 150 587 150 Z"/>
+    <text class="table-title" x="598" y="178">BL_PRODUCT_RATINGS</text>
+    <text class="column column-key" x="598" y="220">PK  RATING_ID</text>
+    <text class="column column-key" x="598" y="244">FK  MEMBER_ID</text>
+    <text class="column column-key" x="598" y="268">FK  PRODUCT_ID</text>
+    <text class="column" x="598" y="292">RATING, IRRITATION_YN</text>
+    <text class="column" x="598" y="316">REPURCHASE_YN</text>
+  </g>
+
+  <g role="group" aria-label="BL_PRODUCTS 테이블">
+    <rect class="table table-product" x="1100" y="150" width="280" height="200" rx="7"/>
+    <path class="table-header" d="M1107 150 H1373 Q1380 150 1380 157 V194 H1100 V157 Q1100 150 1107 150 Z"/>
+    <text class="table-title" x="1118" y="178">BL_PRODUCTS</text>
+    <text class="column column-key" x="1118" y="220">PK  PRODUCT_ID</text>
+    <text class="column" x="1118" y="244">PRODUCT_KEY, PLATFORM</text>
+    <text class="column" x="1118" y="268">PRODUCT_NAME, BRAND</text>
+    <text class="column" x="1118" y="292">RECOMMENDATION_SCORE</text>
+    <text class="column" x="1118" y="316">CAUTION_LEVEL</text>
+    <text class="column" x="1118" y="340">BASE_SKIN_TYPE</text>
+  </g>
+
+  <g role="group" aria-label="BL_FACE_CREDENTIALS 테이블">
+    <rect class="table table-account" x="60" y="470" width="280" height="160" rx="7"/>
+    <path class="table-header" d="M67 470 H333 Q340 470 340 477 V514 H60 V477 Q60 470 67 470 Z"/>
+    <text class="table-title" x="78" y="498">BL_FACE_CREDENTIALS</text>
+    <text class="column column-key" x="78" y="540">PK  FACE_ID</text>
+    <text class="column column-key" x="78" y="564">FK/UQ  MEMBER_ID</text>
+    <text class="column" x="78" y="588">FACE_EMBEDDING</text>
+    <text class="column" x="78" y="612">FACE_ENABLED</text>
+  </g>
+
+  <g role="group" aria-label="BL_PRODUCT_COMMENTS 테이블">
+    <rect class="table table-feedback" x="580" y="470" width="280" height="200" rx="7"/>
+    <path class="table-header" d="M587 470 H853 Q860 470 860 477 V514 H580 V477 Q580 470 587 470 Z"/>
+    <text class="table-title" x="598" y="498">BL_PRODUCT_COMMENTS</text>
+    <text class="column column-key" x="598" y="540">PK  COMMENT_ID</text>
+    <text class="column column-key" x="598" y="564">FK  MEMBER_ID</text>
+    <text class="column column-key" x="598" y="588">FK  PRODUCT_ID</text>
+    <text class="column" x="598" y="612">CONTENT, STATUS</text>
+    <text class="column column-logical" x="598" y="636">APP DELETED_BY</text>
+    <text class="column" x="598" y="660">DELETED_AT, DELETE_REASON</text>
+  </g>
+
+  <g role="group" aria-label="BL_REVIEWS 테이블">
+    <rect class="table table-product" x="1100" y="470" width="280" height="180" rx="7"/>
+    <path class="table-header" d="M1107 470 H1373 Q1380 470 1380 477 V514 H1100 V477 Q1100 470 1107 470 Z"/>
+    <text class="table-title" x="1118" y="498">BL_REVIEWS</text>
+    <text class="column column-key" x="1118" y="540">PK  REVIEW_ID</text>
+    <text class="column column-key" x="1118" y="564">FK  PRODUCT_ID</text>
+    <text class="column" x="1118" y="588">REVIEW_TEXT, RATING</text>
+    <text class="column" x="1118" y="612">SENTIMENT_LABEL</text>
+    <text class="column" x="1118" y="636">PLATFORM_REVIEW_ID</text>
+  </g>
+
+  <g role="group" aria-label="BL_COMMENT_REPORTS 테이블">
+    <rect class="table table-operation" x="580" y="790" width="280" height="170" rx="7"/>
+    <path class="table-header" d="M587 790 H853 Q860 790 860 797 V834 H580 V797 Q580 790 587 790 Z"/>
+    <text class="table-title" x="598" y="818">BL_COMMENT_REPORTS</text>
+    <text class="column column-key" x="598" y="860">PK  REPORT_ID</text>
+    <text class="column column-key" x="598" y="884">FK  COMMENT_ID</text>
+    <text class="column column-key" x="598" y="908">FK  REPORTER_ID</text>
+    <text class="column column-key" x="598" y="932">FK  HANDLED_BY</text>
+    <text class="column" x="598" y="956">STATUS, REASON_TYPE</text>
+  </g>
+
+  <g role="group" aria-label="BL_PRODUCT_ADMIN_FLAGS 테이블">
+    <rect class="table table-operation" x="1100" y="790" width="280" height="170" rx="7"/>
+    <path class="table-header" d="M1107 790 H1373 Q1380 790 1380 797 V834 H1100 V797 Q1100 790 1107 790 Z"/>
+    <text class="table-title" x="1118" y="818">BL_PRODUCT_ADMIN_FLAGS</text>
+    <text class="column column-key" x="1118" y="860">PK/FK  PRODUCT_ID</text>
+    <text class="column column-key" x="1118" y="884">FK  UPDATED_BY</text>
+    <text class="column" x="1118" y="908">IS_VISIBLE</text>
+    <text class="column" x="1118" y="932">EXCLUDE_RECOMMENDATION</text>
+    <text class="column" x="1118" y="956">QUALITY_STATUS</text>
+  </g>
+
+  <text class="scope-note" x="60" y="1030">SVG는 핵심 8개 테이블과 9개 관계만 표시합니다. 전체 22개 FK와 생략 관계는 문서의 relationship table을 확인하십시오.</text>
 </svg>
