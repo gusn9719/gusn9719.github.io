@@ -61,6 +61,19 @@ describe("Portfolio usability and evidence", () => {
     expect(card).not.toContain(">Built<");
   });
 
+  it("모바일 Security Hub visual은 한 화면씩 넘길 수 있다는 안내와 scroll snap을 제공한다", async () => {
+    const html = await readBuiltPage("index.html");
+    const card = readProjectCard(html, "security-hub");
+    const css = await readBuiltCss(html);
+
+    expect(card).toContain("좌우로 밀어 다음 화면 보기");
+    expect(css).toMatch(/\.project-preview__swipe-hint\{[^}]*display:none/);
+    expect(css).toMatch(/@media\s*\(width<=680px\)[\s\S]*\.project-preview--flow \.project-preview__media--split\{[^}]*grid-auto-columns:100%/);
+    expect(css).toMatch(/@media\s*\(width<=680px\)[\s\S]*\.project-preview--flow \.project-preview__media--split\{[^}]*overflow-x:auto/);
+    expect(css).toMatch(/@media\s*\(width<=680px\)[\s\S]*\.project-preview--flow \.project-preview__media--split\{[^}]*scroll-snap-type:x mandatory/);
+    expect(css).toMatch(/@media\s*\(width<=680px\)[\s\S]*\.project-preview__swipe-hint\{[^}]*display:flex/);
+  });
+
   it("Home에서 세 프로젝트의 실제 visual evidence를 바로 보여준다", async () => {
     const html = await readBuiltPage("index.html");
     const previews = html.match(/<figure\b[^>]*class="[^"]*project-preview[^"]*"[\s\S]*?<\/figure>/gi) ?? [];
