@@ -29,23 +29,30 @@ const isHomeEntry = Boolean(project.homeEntry && detailLink);
 
     <figure class:list={["project-preview", { "project-preview--portrait": !isHomeEntry && project.preview.items.some((item) => item.presentation === "portrait"), "project-preview--flow": isHomeEntry }] }>
       {isHomeEntry ? (
-        <a class="project-preview__link" href={detailLink!.href} aria-label={`${project.title} Case Study 보기`}>
-          <div class:list={["project-preview__media", { "project-preview__media--split": project.preview.items.length > 1 }] }>
-            {project.preview.items.map((item) => (
-              <div class:list={["project-preview__item", `project-preview__item--${item.fit ?? "cover"}`, item.presentation && `project-preview__item--${item.presentation}`]}>
-                <span>{item.label}</span>
-                <img
-                  src={item.src}
-                  alt={item.alt}
-                  width={item.width}
-                  height={item.height}
-                  loading="lazy"
-                  decoding="async"
-                />
-              </div>
-            ))}
-          </div>
-        </a>
+        <div
+          class:list={["project-preview__media", { "project-preview__media--split": project.preview.items.length > 1 }]}
+          role="group"
+          aria-label={`${project.title} 화면 미리보기`}
+          aria-describedby={`${project.slug}-swipe-hint`}
+        >
+          {project.preview.items.map((item) => (
+            <a
+              class:list={["project-preview__link", "project-preview__item", `project-preview__item--${item.fit ?? "cover"}`, item.presentation && `project-preview__item--${item.presentation}`]}
+              href={detailLink!.href}
+              aria-label={`${item.label} — ${project.title} Case Study 보기`}
+            >
+              <span>{item.label}</span>
+              <img
+                src={item.src}
+                alt={item.alt}
+                width={item.width}
+                height={item.height}
+                loading="lazy"
+                decoding="async"
+              />
+            </a>
+          ))}
+        </div>
       ) : (
         <div class:list={["project-preview__media", { "project-preview__media--split": project.preview.items.length > 1 }] }>
           {project.preview.items.map((item) => (
@@ -64,9 +71,9 @@ const isHomeEntry = Boolean(project.homeEntry && detailLink);
         </div>
       )}
       {isHomeEntry && (
-        <p class="project-preview__swipe-hint">
+        <p id={`${project.slug}-swipe-hint`} class="project-preview__swipe-hint">
           <span aria-hidden="true">←</span>
-          <span>좌우로 밀어 다음 화면 보기</span>
+          <span>좌우로 밀거나 Tab 키로 다음 화면 보기</span>
           <span aria-hidden="true">→</span>
         </p>
       )}

@@ -397,14 +397,16 @@ h4 {
 }
 
 .project-preview__link {
-  display: block;
   color: inherit;
   text-decoration: none;
 }
 
-.project-preview__link:hover .project-preview__media,
-.project-preview__link:focus-visible .project-preview__media {
-  border-color: var(--accent);
+.project-preview__link:hover {
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+.project-preview__link:focus-visible {
+  outline-offset: -4px;
 }
 
 .project-preview__item {

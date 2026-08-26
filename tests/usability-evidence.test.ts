@@ -34,7 +34,7 @@ describe("Portfolio usability and evidence", () => {
     const card = readProjectCard(html, "security-hub");
     const detailLinks = card.match(/href="\/projects\/security-hub\/"/g) ?? [];
 
-    expect(detailLinks).toHaveLength(3);
+    expect(detailLinks).toHaveLength(4);
     expect(card).toMatch(/<h3\b[^>]*id="security-hub-title"[^>]*>\s*<a\b[^>]*href="\/projects\/security-hub\/"/i);
     expect(card).toMatch(/<a\b[^>]*class="[^"]*project-preview__link[^"]*"[^>]*href="\/projects\/security-hub\/"/i);
     expect(card).toMatch(/<a\b[^>]*class="[^"]*button[^"]*"[^>]*href="\/projects\/security-hub\/"[^>]*>\s*Case Study 보기/i);
@@ -66,7 +66,10 @@ describe("Portfolio usability and evidence", () => {
     const card = readProjectCard(html, "security-hub");
     const css = await readBuiltCss(html);
 
-    expect(card).toContain("좌우로 밀어 다음 화면 보기");
+    expect(card).toContain("좌우로 밀거나 Tab 키로 다음 화면 보기");
+    expect(card).toMatch(/<div[^>]*class="project-preview__media project-preview__media--split"[^>]*role="group"[^>]*aria-describedby="security-hub-swipe-hint"/);
+    expect(card.match(/<a[^>]*class="project-preview__link project-preview__item[^>]*href="\/projects\/security-hub\/"/g)).toHaveLength(2);
+    expect(card).toContain('id="security-hub-swipe-hint"');
     expect(css).toMatch(/\.project-preview__swipe-hint\{[^}]*display:none/);
     expect(css).toMatch(/@media\s*\(width<=680px\)[\s\S]*\.project-preview--flow \.project-preview__media--split\{[^}]*grid-auto-columns:100%/);
     expect(css).toMatch(/@media\s*\(width<=680px\)[\s\S]*\.project-preview--flow \.project-preview__media--split\{[^}]*overflow-x:auto/);
