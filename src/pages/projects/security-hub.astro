@@ -1,17 +1,27 @@
 ---
-import MetricGrid from "../../components/MetricGrid.astro";
+import EvidenceGrid from "../../components/EvidenceGrid.astro";
 import ProjectLayout from "../../layouts/ProjectLayout.astro";
 import { getProjectBySlug } from "../../data/projects";
 
 const project = getProjectBySlug("security-hub");
+const sections = [
+  { id: "security-overview", label: "Overview" },
+  { id: "security-flow", label: "System Flow" },
+  { id: "security-contribution", label: "Contribution" },
+  { id: "security-decisions", label: "Decisions" },
+  { id: "security-solving", label: "Problem Solving" },
+  { id: "security-validation", label: "Evidence" },
+  { id: "security-limitations", label: "Limitations" },
+];
 ---
 
 <ProjectLayout
   project={project}
   description="의심 URL을 열기 전에 분석하고 필요하면 격리 브라우저에서 확인하는 Security Hub의 문제 정의, 임현우의 기여, 검증과 한계를 정리한 Case Study입니다."
+  sections={sections}
 >
-  <figure slot="lead-visual" class="project-visual project-visual--video">
-    <video controls preload="metadata" aria-describedby="security-demo-caption">
+  <figure slot="lead-visual" class="project-visual project-visual--video project-visual--portrait-video">
+    <video controls preload="metadata" poster="/assets/security-hub/analysis-result-poster.webp" aria-describedby="security-demo-caption">
       <source src="/assets/security-hub/demo-suspicious-direct-browse.mp4" type="video/mp4" />
       브라우저가 영상을 지원하지 않습니다.
     </video>
@@ -114,18 +124,47 @@ const project = getProjectBySlug("security-hub");
   </section>
 
   <section class="case-section" aria-labelledby="security-validation">
-    <div class="case-section__title"><p>06</p><h2 id="security-validation">Validation</h2></div>
+    <div class="case-section__title"><p>06</p><h2 id="security-validation">Evidence / Test Context</h2></div>
     <div class="case-copy">
-      <MetricGrid
-        label="Security Hub 검증 결과"
-        metrics={[
-          { value: "200 / 200", label: "위험 URL 탐지", note: "독립 holdout 250건 중 위험 URL" },
-          { value: "50 / 50", label: "안전 URL 판정", note: "동일 holdout의 안전 URL" },
-          { value: "710.9 ms", label: "100명 동시 요청 p95", note: "모든 요청 2xx" },
-          { value: "11 / 11", label: "Hardening 시도 차단", note: "알려진 container escape 테스트" },
+      <EvidenceGrid
+        items={[
+          {
+            label: "Regression check",
+            result: "508건 tuning regression set 통과",
+            context: "performance_test_set은 휴리스틱을 조정할 때 사용한 508건입니다.",
+            supports: "알려진 사례에서 규칙 변경으로 기존 판정이 깨지지 않았는지 확인했습니다.",
+            boundary: "튜닝에 사용한 자료이므로 독립적인 정확도 평가가 아닙니다.",
+          },
+          {
+            label: "Holdout check",
+            result: "250건 holdout에서 위험 200건·안전 50건 판정",
+            context: "별도 holdout을 사용했지만 URL 확장과 WHOIS 등 외부 네트워크 조회 일부는 mock 처리했습니다.",
+            supports: "고정된 입력과 외부 응답 조건에서 분석 pipeline이 예상 판정을 유지했습니다.",
+            boundary: "실시간 URL 상태와 외부 서비스 변동을 포함한 운영 환경 탐지율은 증명하지 않습니다.",
+          },
+          {
+            label: "Load check",
+            result: "100명은 2xx, 1,000명에서는 중단",
+            context: "고유 path로 cache 영향을 제거했습니다. 100명 동시 요청은 모두 성공했고 p95는 710.9ms였지만, 1,000명에서는 개발 서버가 응답을 멈췄습니다.",
+            supports: "개발 환경의 현재 처리 범위와 single-worker 병목을 구분했습니다.",
+            boundary: "client와 server가 같은 PC에 있어 network latency가 빠르게 측정됐을 수 있습니다.",
+          },
+          {
+            label: "Live Sandbox pilot",
+            result: "살아 있는 URL에서 판정 차이를 관찰",
+            context: "danger URL 10개 중 9개는 이미 종료됐고, 살아 있던 danger URL 1개에서는 위험 신호가 없었습니다. 살아 있던 safe URL 9개 중 2개에서는 sandbox 신호가 나왔습니다.",
+            supports: "실제 URL의 소멸과 행동 신호 오탐 가능성을 확인했습니다.",
+            boundary: "표본이 작고 URL 상태가 변하므로 phishing 탐지 정확도로 일반화하지 않습니다.",
+          },
+          {
+            label: "Sandbox hardening",
+            result: "11 / 11 알려진 escape 시도 차단",
+            context: "문서에 정리한 container escape 입력을 현재 격리 설정에서 실행했습니다.",
+            supports: "테스트한 공격 경로가 정책에 의해 차단되는지 확인했습니다.",
+            boundary: "kernel 취약점이나 0-day 공격에 대한 안전성을 증명하지 않습니다.",
+          },
         ]}
       />
-      <p class="validation-note">평가 수치는 조건과 함께 읽어야 합니다. URL 확장과 외부 평판 조회 일부는 mock 처리했으며, 100%라는 숫자를 일반화된 탐지 정확도로 사용하지 않습니다.</p>
     </div>
   </section>
 
@@ -138,6 +177,10 @@ const project = getProjectBySlug("security-hub");
         <li>실제 피싱 URL 10개 중 9개가 이미 종료됐고, 남은 1개에서도 신호가 나오지 않아 7-B를 검증된 피싱 탐지기로 표현할 수 없습니다.</li>
         <li>11개 hardening 테스트 통과는 알려진 escape 시도를 막았다는 뜻이며 kernel 취약점이나 0-day 안전성을 증명하지 않습니다.</li>
       </ul>
+      <div class="next-test">
+        <h3>What I would test next</h3>
+        <p>시간에 따라 상태가 변하는 live URL 묶음을 주기적으로 교체하고, 외부 조회를 실제 network 조건에서 수행하며, production worker 구성에서 단계별 부하 테스트를 다시 실행하겠습니다.</p>
+      </div>
       <a class="text-link source-link" href="https://github.com/gusn9719/security_hub/tree/main/docs" target="_blank" rel="noopener noreferrer">평가 문서 전체 보기 <span aria-hidden="true">↗</span></a>
     </div>
   </section>

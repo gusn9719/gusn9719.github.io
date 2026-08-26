@@ -1,0 +1,29 @@
+---
+interface EvidenceItem {
+  label: string;
+  result: string;
+  context: string;
+  supports: string;
+  boundary: string;
+}
+
+interface Props {
+  items: EvidenceItem[];
+}
+
+const { items } = Astro.props;
+---
+
+<div class="evidence-grid">
+  {items.map((item) => (
+    <article class="evidence-card">
+      <p class="evidence-card__label">{item.label}</p>
+      <h3>{item.result}</h3>
+      <dl>
+        <div><dt>Test context</dt><dd>{item.context}</dd></div>
+        <div><dt>What it supports</dt><dd>{item.supports}</dd></div>
+        <div><dt>Boundary</dt><dd>{item.boundary}</dd></div>
+      </dl>
+    </article>
+  ))}
+</div>

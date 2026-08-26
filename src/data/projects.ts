@@ -9,6 +9,21 @@ export interface ProjectLink {
   kind: "detail" | "github" | "demo";
 }
 
+export interface ProjectPreviewItem {
+  label: string;
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  fit?: "contain" | "cover";
+  presentation?: "portrait" | "landscape" | "diagram";
+}
+
+export interface ProjectPreview {
+  caption: string;
+  items: ProjectPreviewItem[];
+}
+
 export interface Project {
   slug: ProjectSlug;
   order: string;
@@ -21,6 +36,7 @@ export interface Project {
   role: string;
   stack: string[];
   links: ProjectLink[];
+  preview: ProjectPreview;
   serviceRecommendationModel?: string;
   comparedModels?: string[];
   klueBertUsedForServiceArtifact?: boolean;
@@ -43,6 +59,20 @@ export const projects: Project[] = [
       "프로젝트 아이디어와 사용자 흐름을 구상하고 Flutter 주요 화면, FastAPI 인증·분석 연동, 휴리스틱 보완, URL 처리 보안 수정과 시스템 통합에 참여했습니다.",
     role: "아이디어·서비스 흐름, Flutter 주요 기능, FastAPI 기능·통합",
     stack: ["Flutter", "FastAPI", "Docker", "Playwright"],
+    preview: {
+      caption: "실제 앱 demo에서 URL 분석 결과를 확인한 장면입니다.",
+      items: [
+        {
+          label: "App demo",
+          src: "/assets/security-hub/analysis-result-poster.webp",
+          alt: "Security Hub 앱에서 URL을 분석해 의심 판정을 표시한 실제 demo 화면",
+          width: 334,
+          height: 720,
+          fit: "contain",
+          presentation: "portrait",
+        },
+      ],
+    },
     links: [
       {
         label: "Case Study",
@@ -70,6 +100,29 @@ export const projects: Project[] = [
       "OliveYoung 리뷰를 직접 수집하고 제공받은 Musinsa·Coupang 데이터를 통합했습니다. 전처리·모델 비교·추천 집계·Streamlit 구현 후 BeautyLens의 데이터 적재와 Spring MVC 기능을 구현했습니다.",
     role: "데이터 수집·통합, 모델 비교, 추천 artifact, Spring MVC 서비스",
     stack: ["Python", "BiLSTM", "Spring MVC", "Oracle"],
+    preview: {
+      caption: "ReviewFit에서 BeautyLens로 이어진 실제 결과물: 실행 화면과 후속 서비스의 최신 ERD입니다.",
+      items: [
+        {
+          label: "ReviewFit",
+          src: "/assets/reviewfit/reviewfit-service-poster.webp",
+          alt: "피부타입 필터, 상품 점수와 긍정·부정 리뷰를 표시한 ReviewFit 실제 Streamlit 화면",
+          width: 900,
+          height: 483,
+          fit: "cover",
+          presentation: "landscape",
+        },
+        {
+          label: "BeautyLens",
+          src: "/assets/beautylens/beautylens-erd.svg",
+          alt: "상품, 외부 리뷰, 회원 평가와 운영 기록의 관계를 나타낸 BeautyLens 최신 ERD",
+          width: 1440,
+          height: 1050,
+          fit: "contain",
+          presentation: "diagram",
+        },
+      ],
+    },
     links: [
       {
         label: "Case Study",
@@ -105,6 +158,20 @@ export const projects: Project[] = [
       "PDF 데이터 가공, QA 작성·검증, fine-tuning 실험 비교, 검색 인덱스와 평가 코드, 실패 분석과 chatbot까지 전체 과정을 수행하고 기록했습니다.",
     role: "데이터셋 구성·검증, QLoRA 실험, RAG 평가·실패 분석",
     stack: ["Python", "Gemma 4", "QLoRA", "FAISS · BM25"],
+    preview: {
+      caption: "실제 QLoRA 학습 기록입니다. 이 곡선만으로 일반화 성능을 판단하지 않습니다.",
+      items: [
+        {
+          label: "Training record",
+          src: "/assets/gemma/loss-curve.png",
+          alt: "Gemma4 QLoRA 학습 단계에 따른 train loss와 eval loss 변화 그래프",
+          width: 1248,
+          height: 701,
+          fit: "contain",
+          presentation: "landscape",
+        },
+      ],
+    },
     links: [
       {
         label: "Case Study",

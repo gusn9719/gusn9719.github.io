@@ -5,10 +5,12 @@ import { projects, type Project } from "../data/projects";
 interface Props {
   project: Project;
   description: string;
+  sections: Array<{ id: string; label: string }>;
 }
 
-const { project, description } = Astro.props;
+const { project, description, sections } = Astro.props;
 const projectIndex = projects.findIndex((candidate) => candidate.slug === project.slug);
+const previousProject = projects[(projectIndex - 1 + projects.length) % projects.length];
 const nextProject = projects[(projectIndex + 1) % projects.length];
 ---
 
@@ -51,16 +53,29 @@ const nextProject = projects[(projectIndex + 1) % projects.length];
 
     <slot name="lead-visual" />
 
+    <nav class="project-section-nav" aria-label="Case Study 목차">
+      <div class="project-section-nav__inner">
+        <span>On this page</span>
+        <ol>
+          {sections.map((section) => (
+            <li><a href={`#${section.id}`}>{section.label}</a></li>
+          ))}
+        </ol>
+      </div>
+    </nav>
+
     <div class="case-content">
       <slot />
     </div>
 
-    <nav class="next-project" aria-label="다음 프로젝트">
-      <p>Next Case Study</p>
+    <nav class="project-switcher" aria-label="다른 Case Study">
+      <a href={`/projects/${previousProject.slug}/`}>
+        <span class="project-switcher__direction">Previous</span>
+        <strong><span aria-hidden="true">←</span> {previousProject.title}</strong>
+      </a>
       <a href={`/projects/${nextProject.slug}/`}>
-        <span>{nextProject.order}</span>
-        <strong>{nextProject.title}</strong>
-        <span aria-hidden="true">→</span>
+        <span class="project-switcher__direction">Next</span>
+        <strong>{nextProject.title} <span aria-hidden="true">→</span></strong>
       </a>
     </nav>
   </article>

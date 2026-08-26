@@ -19,6 +19,25 @@ const { project } = Astro.props;
       <p class="project-row__context">{project.context}</p>
     </div>
 
+    <figure class:list={["project-preview", { "project-preview--portrait": project.preview.items.some((item) => item.presentation === "portrait") }] }>
+      <div class:list={["project-preview__media", { "project-preview__media--split": project.preview.items.length > 1 }] }>
+        {project.preview.items.map((item) => (
+          <div class:list={["project-preview__item", `project-preview__item--${item.fit ?? "cover"}`, item.presentation && `project-preview__item--${item.presentation}`]}>
+            <span>{item.label}</span>
+            <img
+              src={item.src}
+              alt={item.alt}
+              width={item.width}
+              height={item.height}
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+        ))}
+      </div>
+      <figcaption>{project.preview.caption}</figcaption>
+    </figure>
+
     <div class="project-row__summary">
       <div>
         <p class="summary-label">Problem</p>

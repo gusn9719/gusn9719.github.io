@@ -1,14 +1,25 @@
 ---
 import MetricGrid from "../../components/MetricGrid.astro";
+import EvidenceGrid from "../../components/EvidenceGrid.astro";
 import ProjectLayout from "../../layouts/ProjectLayout.astro";
 import { getProjectBySlug } from "../../data/projects";
 
 const project = getProjectBySlug("gemma4-t17-rag");
+const sections = [
+  { id: "gemma-overview", label: "Scope" },
+  { id: "gemma-dataset", label: "Dataset" },
+  { id: "gemma-finetuning", label: "Fine-tuning" },
+  { id: "gemma-rag", label: "RAG" },
+  { id: "gemma-solving", label: "Problem Solving" },
+  { id: "gemma-validation", label: "Evidence" },
+  { id: "gemma-limitations", label: "Limitations" },
+];
 ---
 
 <ProjectLayout
   project={project}
   description="Tennant T17 영문 서비스 매뉴얼 QA 데이터셋, text-only Gemma4 QLoRA와 Hybrid RAG의 실험 판단과 평가 한계를 정리한 Case Study입니다."
+  sections={sections}
 >
   <figure slot="lead-visual" class="project-visual project-visual--image project-visual--dark">
     <img src="/assets/gemma/loss-curve.png" alt="Gemma4 QLoRA 학습 단계에 따른 train loss와 eval loss 변화 그래프" width="1248" height="701" decoding="async" />
@@ -100,15 +111,38 @@ const project = getProjectBySlug("gemma4-t17-rag");
   </section>
 
   <section class="case-section" aria-labelledby="gemma-validation">
-    <div class="case-section__title"><p>06</p><h2 id="gemma-validation">Result / Validation</h2></div>
+    <div class="case-section__title"><p>06</p><h2 id="gemma-validation">Evidence / Test Context</h2></div>
     <div class="case-copy">
-      <MetricGrid
-        label="Gemma4 T17 RAG 평가 결과"
-        metrics={[
-          { value: "52 / 56", label: "Answerable Recall@5", note: "fixed 60 중 answerable" },
-          { value: "0.8167", label: "Gemini judge", note: "평가 모델 의존" },
-          { value: "0", label: "Question · answer · pair 중복" },
-          { value: "80", label: "QA 수동 점검", note: "수정 후 spot check" },
+      <EvidenceGrid
+        items={[
+          {
+            label: "Dataset checks",
+            result: "question · answer · pair 중복 0",
+            context: "source unit 기준으로 분리하고 중복과 image path를 검사했으며, 수정 후 QA 80건을 수동 점검했습니다.",
+            supports: "직접 확인한 범위에서 동일 문항과 source unit 중복을 제거했습니다.",
+            boundary: "상위 source group 8개는 겹치므로 절대적인 leak-free 데이터셋을 뜻하지 않습니다.",
+          },
+          {
+            label: "Retrieval development",
+            result: "Recall@5 0.5893 → 0.9286",
+            context: "고정 60문항을 실패 분석에 반복 사용하면서 gold context 정렬과 retrieval 규칙을 함께 수정했습니다. answerable 56문항 중 52문항의 gold context가 top 5에 포함됐습니다.",
+            supports: "같은 development/evaluation set에서 평가 기준과 검색 규칙을 보완한 뒤의 결과를 비교했습니다.",
+            boundary: "독립 final test 성능 향상이나 새로운 문서에 대한 일반화 성능으로 해석할 수 없습니다.",
+          },
+          {
+            label: "Answer evaluation",
+            result: "Gemini judge 0.8167",
+            context: "동일한 고정 60문항 답변을 별도 judge model 기준으로 평가했습니다.",
+            supports: "현재 prompt와 검색 결과를 이용한 답변을 한 가지 자동 평가 기준으로 비교했습니다.",
+            boundary: "평가 모델에 의존하며 사람 평가와 동일하지 않고, 반복 사용한 set의 결과입니다.",
+          },
+          {
+            label: "Training record",
+            result: "train loss 0.902 · validation loss 0.8034",
+            context: "text-only QLoRA 구성에서 rank와 learning rate pilot을 비교하고 최종 run을 기록했습니다.",
+            supports: "선택한 학습 설정이 저장된 validation split에서 수렴한 과정을 보여줍니다.",
+            boundary: "loss curve와 최종 loss만으로 RAG 품질이나 독립 데이터 일반화를 증명하지 않습니다.",
+          },
         ]}
       />
     </div>
@@ -124,6 +158,10 @@ const project = getProjectBySlug("gemma4-t17-rag");
         <li>OCR, 병합 표, 이미지 연결에는 추가 검증이 필요합니다.</li>
         <li>Gemini judge는 평가 모델에 의존하며, 긴 procedure는 1,024 token 제한에서 잘릴 수 있습니다.</li>
       </ul>
+      <div class="next-test">
+        <h3>What I would test next</h3>
+        <p>개발 과정에서 보지 않은 독립 final test를 source group 단위로 따로 만들고, QA가 없는 301–385쪽과 표·이미지 의존 질문을 보강한 뒤 retrieval과 답변을 다시 분리 평가하겠습니다.</p>
+      </div>
       <a class="text-link source-link" href="https://github.com/gusn9719/gemma4-t17-rag-finetuning" target="_blank" rel="noopener noreferrer">실험 기록과 평가 파일 보기 <span aria-hidden="true">↗</span></a>
     </div>
   </section>
