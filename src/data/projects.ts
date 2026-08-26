@@ -24,6 +24,12 @@ export interface ProjectPreview {
   items: ProjectPreviewItem[];
 }
 
+export interface ProjectHomeEntry {
+  summary: string;
+  contribution: string;
+  ctaLabel: string;
+}
+
 export interface Project {
   slug: ProjectSlug;
   order: string;
@@ -37,6 +43,7 @@ export interface Project {
   stack: string[];
   links: ProjectLink[];
   preview: ProjectPreview;
+  homeEntry?: ProjectHomeEntry;
   serviceRecommendationModel?: string;
   comparedModels?: string[];
   klueBertUsedForServiceArtifact?: boolean;
@@ -60,18 +67,34 @@ export const projects: Project[] = [
     role: "아이디어·서비스 흐름, Flutter 주요 기능, FastAPI 기능·통합",
     stack: ["Flutter", "FastAPI", "Docker", "Playwright"],
     preview: {
-      caption: "실제 앱 demo에서 URL 분석 결과를 확인한 장면입니다.",
+      caption: "URL 분석 결과를 확인한 뒤, 격리 환경에서 확인할 방식을 선택하는 실제 앱 흐름입니다.",
       items: [
         {
-          label: "App demo",
-          src: "/assets/security-hub/analysis-result-poster.webp",
-          alt: "Security Hub 앱에서 URL을 분석해 의심 판정을 표시한 실제 demo 화면",
-          width: 334,
-          height: 720,
+          label: "01 · 위험도 판정",
+          src: "/assets/security-hub/suspicious-result.png",
+          alt: "Security Hub 앱이 입력한 URL을 의심으로 판정하고 격리 환경 테스트 버튼을 표시한 화면",
+          width: 432,
+          height: 887,
+          fit: "contain",
+          presentation: "portrait",
+        },
+        {
+          label: "02 · 확인 방식 선택",
+          src: "/assets/security-hub/analysis-mode.png",
+          alt: "Security Hub의 안전 분석 화면에서 직접 둘러보기와 AI 확인 방식 중 하나를 선택하는 화면",
+          width: 439,
+          height: 892,
           fit: "contain",
           presentation: "portrait",
         },
       ],
+    },
+    homeEntry: {
+      summary:
+        "의심 URL을 분석하고, 판단이 어려운 링크는 격리된 화면에서 확인하도록 연결한 모바일 보안 서비스입니다.",
+      contribution:
+        "아이디어·사용자 흐름 설계, Flutter 주요 화면, FastAPI 인증·분석 연동과 시스템 통합에 참여했습니다.",
+      ctaLabel: "Case Study 보기",
     },
     links: [
       {

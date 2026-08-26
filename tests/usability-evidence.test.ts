@@ -12,6 +12,16 @@ async function readBuiltCss(html: string): Promise<string> {
   return readFile(join(process.cwd(), "dist", cssHref!.replace(/^\//, "")), "utf8");
 }
 
+function readProjectCard(html: string, slug: string): string {
+  const marker = `aria-labelledby="${slug}-title"`;
+  const start = html.lastIndexOf("<article", html.indexOf(marker));
+  const end = html.indexOf("</article>", start);
+
+  expect(start).toBeGreaterThanOrEqual(0);
+  expect(end).toBeGreaterThan(start);
+  return html.slice(start, end + "</article>".length);
+}
+
 const caseStudyPages = [
   "projects/security-hub/index.html",
   "projects/reviewfit-beautylens/index.html",
@@ -19,12 +29,45 @@ const caseStudyPages = [
 ];
 
 describe("Portfolio usability and evidence", () => {
+  it("Security Hub Home 카드에서 제목·visual·primary CTA로 Case Study에 들어간다", async () => {
+    const html = await readBuiltPage("index.html");
+    const card = readProjectCard(html, "security-hub");
+    const detailLinks = card.match(/href="\/projects\/security-hub\/"/g) ?? [];
+
+    expect(detailLinks).toHaveLength(3);
+    expect(card).toMatch(/<h3\b[^>]*id="security-hub-title"[^>]*>\s*<a\b[^>]*href="\/projects\/security-hub\/"/i);
+    expect(card).toMatch(/<a\b[^>]*class="[^"]*project-preview__link[^"]*"[^>]*href="\/projects\/security-hub\/"/i);
+    expect(card).toMatch(/<a\b[^>]*class="[^"]*button[^"]*"[^>]*href="\/projects\/security-hub\/"[^>]*>\s*Case Study 보기/i);
+  });
+
+  it("Security Hub Home 카드에서 실제 판정과 확인 방식 선택 화면을 함께 보여준다", async () => {
+    const html = await readBuiltPage("index.html");
+    const card = readProjectCard(html, "security-hub");
+
+    expect(card).toContain("/assets/security-hub/suspicious-result.png");
+    expect(card).toContain("/assets/security-hub/analysis-mode.png");
+    expect(card).not.toContain("/assets/security-hub/analysis-result-poster.webp");
+    expect(card.match(/<img\b[^>]*>/gi)).toHaveLength(2);
+  });
+
+  it("Security Hub Home 카드는 세 칼럼 보고서 대신 짧은 설명과 개인 기여를 보여준다", async () => {
+    const html = await readBuiltPage("index.html");
+    const card = readProjectCard(html, "security-hub");
+
+    expect(card).toContain("의심 URL을 분석하고, 판단이 어려운 링크는 격리된 화면에서 확인하도록 연결한 모바일 보안 서비스입니다.");
+    expect(card).toContain("아이디어·사용자 흐름 설계, Flutter 주요 화면, FastAPI 인증·분석 연동과 시스템 통합에 참여했습니다.");
+    expect(card).not.toContain("summary-label");
+    expect(card).not.toContain(">Problem<");
+    expect(card).not.toContain(">Built<");
+  });
+
   it("Home에서 세 프로젝트의 실제 visual evidence를 바로 보여준다", async () => {
     const html = await readBuiltPage("index.html");
     const previews = html.match(/<figure\b[^>]*class="[^"]*project-preview[^"]*"[\s\S]*?<\/figure>/gi) ?? [];
 
     expect(previews).toHaveLength(3);
-    expect(html).toContain("/assets/security-hub/analysis-result-poster.webp");
+    expect(html).toContain("/assets/security-hub/suspicious-result.png");
+    expect(html).toContain("/assets/security-hub/analysis-mode.png");
     expect(html).toContain("/assets/reviewfit/reviewfit-service-poster.webp");
     expect(html).toContain("/assets/beautylens/beautylens-erd.svg");
     expect(html).toContain("/assets/gemma/loss-curve.png");
