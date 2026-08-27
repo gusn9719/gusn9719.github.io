@@ -1,4 +1,4 @@
-import { readFile } from "node:fs/promises";
+import { readFile, stat } from "node:fs/promises";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
@@ -126,6 +126,7 @@ describe("정적 사이트 출력", () => {
     expect(securityVideo).toBeTruthy();
     expect(securityVideo).toContain('width="334"');
     expect(securityVideo).toContain('height="720"');
+    expect(securityVideo).toMatch(/\bcontrols\b/i);
     expect(securityVideo).toContain('preload="metadata"');
     expect(securityVideo).toContain('poster="/assets/security-hub/analysis-result-poster.webp"');
     expect(securityVideo).not.toMatch(/\bautoplay\b/i);
@@ -133,9 +134,13 @@ describe("정적 사이트 출력", () => {
     expect(reviewVideo).toBeTruthy();
     expect(reviewVideo).toContain('width="1280"');
     expect(reviewVideo).toContain('height="686"');
+    expect(reviewVideo).toMatch(/\bcontrols\b/i);
     expect(reviewVideo).toContain('preload="metadata"');
     expect(reviewVideo).toContain('poster="/assets/reviewfit/reviewfit-service-poster.webp"');
     expect(reviewVideo).not.toMatch(/\bautoplay\b/i);
+
+    const reviewDemo = await stat(join(process.cwd(), "public", "assets", "reviewfit", "reviewfit-demo.mp4"));
+    expect(reviewDemo.size).toBeLessThan(6 * 1024 * 1024);
   });
 
   it("모든 콘텐츠 이미지에 대체 텍스트를 둔다", async () => {

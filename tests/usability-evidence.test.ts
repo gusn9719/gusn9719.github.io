@@ -240,6 +240,8 @@ describe("Portfolio usability and evidence", () => {
     expect(video).toContain('poster="/assets/security-hub/analysis-result-poster.webp"');
     expect(video).not.toMatch(/\bautoplay\b/i);
     expect(css).toMatch(/\.project-visual--video\{[^}]*max-width/);
+    const videoRule = css.match(/\.project-visual--video video\{[^}]*}/)?.[0];
+    expect(videoRule).toContain("aspect-ratio:auto");
     expect(css).toMatch(/\.project-visual--portrait-video\{[^}]*max-width:420px/);
     const portraitVideoRule = css.match(/\.project-visual--portrait-video video\{[^}]*}/)?.[0];
     expect(portraitVideoRule).toContain("width:auto");

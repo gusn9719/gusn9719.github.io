@@ -945,7 +945,7 @@ h4 {
 }
 
 .project-visual--video video {
-  aspect-ratio: 16 / 9;
+  aspect-ratio: auto;
   height: auto;
   object-fit: contain;
   background: #111;
