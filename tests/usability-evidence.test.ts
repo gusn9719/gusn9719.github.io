@@ -71,10 +71,58 @@ describe("Portfolio usability and evidence", () => {
     expect(card.match(/<a[^>]*class="project-preview__link project-preview__item[^>]*href="\/projects\/security-hub\/"/g)).toHaveLength(2);
     expect(card).toContain('id="security-hub-swipe-hint"');
     expect(css).toMatch(/\.project-preview__swipe-hint\{[^}]*display:none/);
-    expect(css).toMatch(/@media\s*\(width<=680px\)[\s\S]*\.project-preview--flow \.project-preview__media--split\{[^}]*grid-auto-columns:100%/);
-    expect(css).toMatch(/@media\s*\(width<=680px\)[\s\S]*\.project-preview--flow \.project-preview__media--split\{[^}]*overflow-x:auto/);
-    expect(css).toMatch(/@media\s*\(width<=680px\)[\s\S]*\.project-preview--flow \.project-preview__media--split\{[^}]*scroll-snap-type:x mandatory/);
+    expect(css).toMatch(/@media\s*\(width<=680px\)[\s\S]*\.project-preview--entry \.project-preview__media--split\{[^}]*grid-auto-columns:100%/);
+    expect(css).toMatch(/@media\s*\(width<=680px\)[\s\S]*\.project-preview--entry \.project-preview__media--split\{[^}]*overflow-x:auto/);
+    expect(css).toMatch(/@media\s*\(width<=680px\)[\s\S]*\.project-preview--entry \.project-preview__media--split\{[^}]*scroll-snap-type:x mandatory/);
     expect(css).toMatch(/@media\s*\(width<=680px\)[\s\S]*\.project-preview__swipe-hint\{[^}]*display:flex/);
+  });
+
+  it("ReviewFit → BeautyLens Home 카드도 제목·두 visual·primary CTA로 Case Study에 들어간다", async () => {
+    const html = await readBuiltPage("index.html");
+    const card = readProjectCard(html, "reviewfit-beautylens");
+    const detailLinks = card.match(/href="\/projects\/reviewfit-beautylens\/"/g) ?? [];
+
+    expect(detailLinks).toHaveLength(4);
+    expect(card).toMatch(/<h3\b[^>]*id="reviewfit-beautylens-title"[^>]*>\s*<a\b[^>]*href="\/projects\/reviewfit-beautylens\/"/i);
+    expect(card.match(/<a[^>]*class="project-preview__link project-preview__item[^>]*href="\/projects\/reviewfit-beautylens\/"/g)).toHaveLength(2);
+    expect(card).toMatch(/<a\b[^>]*class="[^"]*button[^"]*"[^>]*href="\/projects\/reviewfit-beautylens\/"[^>]*>\s*Case Study 보기/i);
+    expect(card).toContain("피부타입별 부정 신호 비율을 계산한 ReviewFit을, 추천·리뷰 데이터를 연결한 Spring MVC 서비스 BeautyLens로 확장했습니다.");
+    expect(card).not.toContain("project-row__summary");
+    expect(card).not.toContain(">Problem<");
+    expect(card).not.toContain(">Built<");
+  });
+
+  it("Gemma Home 카드는 loss curve 대신 실제 RAG 실패 기록을 Case Study 진입 근거로 보여준다", async () => {
+    const html = await readBuiltPage("index.html");
+    const card = readProjectCard(html, "gemma4-t17-rag");
+    const detailLinks = card.match(/href="\/projects\/gemma4-t17-rag\/"/g) ?? [];
+
+    expect(detailLinks).toHaveLength(3);
+    expect(card).toMatch(/<h3\b[^>]*id="gemma4-t17-rag-title"[^>]*>\s*<a\b[^>]*href="\/projects\/gemma4-t17-rag\/"/i);
+    expect(card).toMatch(/<a[^>]*class="project-evidence-record__link"[^>]*href="\/projects\/gemma4-t17-rag\/"/);
+    expect(card).toMatch(/<a\b[^>]*class="[^"]*button[^"]*"[^>]*href="\/projects\/gemma4-t17-rag\/"[^>]*>\s*Case Study 보기/i);
+    expect(card).toContain("eval_000078");
+    expect(card).toMatch(/<p lang="en">For fault code 0x0701,/);
+    expect(card).toContain("Gold context가 Top 5에 포함되지 않음");
+    expect(card).toContain("Retrieval miss");
+    expect(card).toContain("Answer incorrect");
+    expect(card).toContain("반복 사용한 development/evaluation set의 한 기록");
+    expect(card).not.toContain("/assets/gemma/loss-curve.png");
+    expect(card).not.toContain("project-row__summary");
+    expect(card).not.toContain(">Problem<");
+    expect(card).not.toContain(">Built<");
+  });
+
+  it("두 장인 Home visual만 모바일 swipe 안내를 제공한다", async () => {
+    const html = await readBuiltPage("index.html");
+    const reviewCard = readProjectCard(html, "reviewfit-beautylens");
+    const gemmaCard = readProjectCard(html, "gemma4-t17-rag");
+    const css = await readBuiltCss(html);
+
+    expect(reviewCard).toContain('aria-describedby="reviewfit-beautylens-swipe-hint"');
+    expect(reviewCard).toContain("좌우로 밀거나 Tab 키로 다음 화면 보기");
+    expect(gemmaCard).not.toContain("swipe-hint");
+    expect(css).toMatch(/@media\s*\(width<=680px\)[\s\S]*\.project-preview--entry \.project-preview__media--split\{[^}]*scroll-snap-type:x mandatory/);
   });
 
   it("Home에서 세 프로젝트의 실제 visual evidence를 바로 보여준다", async () => {
@@ -86,7 +134,8 @@ describe("Portfolio usability and evidence", () => {
     expect(html).toContain("/assets/security-hub/analysis-mode.png");
     expect(html).toContain("/assets/reviewfit/reviewfit-service-poster.webp");
     expect(html).toContain("/assets/beautylens/beautylens-erd.svg");
-    expect(html).toContain("/assets/gemma/loss-curve.png");
+    expect(html).toContain("eval_000078");
+    expect(html).not.toContain("/assets/gemma/loss-curve.png");
     expect(html).toContain("ReviewFit에서 BeautyLens로 이어진 실제 결과물");
 
     const previewImages = previews.flatMap((preview) => preview.match(/<img\b[^>]*>/gi) ?? []);

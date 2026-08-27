@@ -8,6 +8,9 @@ interface Props {
 const { project } = Astro.props;
 const detailLink = project.links.find((link) => link.kind === "detail");
 const isHomeEntry = Boolean(project.homeEntry && detailLink);
+const homeEvidence = project.homeEntry?.evidence;
+const hasMultiplePreviews = isHomeEntry && !homeEvidence && project.preview.items.length > 1;
+const homeCaption = homeEvidence?.caption ?? project.preview.caption;
 ---
 
 <article class:list={["project-row", { "project-row--entry": isHomeEntry }]} aria-labelledby={`${project.slug}-title`}>
@@ -27,13 +30,54 @@ const isHomeEntry = Boolean(project.homeEntry && detailLink);
 
     {isHomeEntry && <p class="project-row__lede">{project.homeEntry!.summary}</p>}
 
-    <figure class:list={["project-preview", { "project-preview--portrait": !isHomeEntry && project.preview.items.some((item) => item.presentation === "portrait"), "project-preview--flow": isHomeEntry }] }>
-      {isHomeEntry ? (
+    <figure class:list={["project-preview", {
+      "project-preview--portrait": !isHomeEntry && project.preview.items.some((item) => item.presentation === "portrait"),
+      "project-preview--entry": isHomeEntry,
+      "project-preview--flow": isHomeEntry && project.homeEntry!.layout === "phone-flow",
+      "project-preview--evolution": isHomeEntry && project.homeEntry!.layout === "evolution",
+      "project-preview--record": isHomeEntry && project.homeEntry!.layout === "record",
+    }] }>
+      {isHomeEntry && homeEvidence ? (
+        <a
+          class="project-evidence-record__link"
+          href={detailLink!.href}
+          aria-label={`${project.title} Case Study 보기 — ${homeEvidence.id} 평가 기록`}
+        >
+          <div class="project-evidence-record">
+            <div class="project-evidence-record__header">
+              <p>{homeEvidence.label}</p>
+              <strong>{homeEvidence.id}</strong>
+            </div>
+            <div class="project-evidence-record__question">
+              <p class="summary-label">Question</p>
+              <p lang="en">{homeEvidence.question}</p>
+            </div>
+            <div class="project-evidence-record__comparison">
+              <div>
+                <p class="summary-label">Retrieved evidence</p>
+                <p>{homeEvidence.retrieved}</p>
+              </div>
+              <div>
+                <p class="summary-label">Expected</p>
+                <p lang="en">{homeEvidence.expected}</p>
+              </div>
+              <div>
+                <p class="summary-label">Generated</p>
+                <p lang="en">{homeEvidence.generated}</p>
+              </div>
+            </div>
+            <div class="project-evidence-record__result">
+              <div>{homeEvidence.outcomes.map((outcome) => <span>{outcome}</span>)}</div>
+              <p>{homeEvidence.boundary}</p>
+            </div>
+          </div>
+        </a>
+      ) : isHomeEntry ? (
         <div
           class:list={["project-preview__media", { "project-preview__media--split": project.preview.items.length > 1 }]}
           role="group"
           aria-label={`${project.title} 화면 미리보기`}
-          aria-describedby={`${project.slug}-swipe-hint`}
+          aria-describedby={hasMultiplePreviews ? `${project.slug}-swipe-hint` : undefined}
         >
           {project.preview.items.map((item) => (
             <a
@@ -70,14 +114,14 @@ const isHomeEntry = Boolean(project.homeEntry && detailLink);
           ))}
         </div>
       )}
-      {isHomeEntry && (
+      {hasMultiplePreviews && (
         <p id={`${project.slug}-swipe-hint`} class="project-preview__swipe-hint">
           <span aria-hidden="true">←</span>
           <span>좌우로 밀거나 Tab 키로 다음 화면 보기</span>
           <span aria-hidden="true">→</span>
         </p>
       )}
-      <figcaption>{project.preview.caption}</figcaption>
+      <figcaption>{homeCaption}</figcaption>
     </figure>
 
     {isHomeEntry ? (

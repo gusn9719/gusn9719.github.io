@@ -28,6 +28,18 @@ export interface ProjectHomeEntry {
   summary: string;
   contribution: string;
   ctaLabel: string;
+  layout?: "phone-flow" | "evolution" | "record";
+  evidence?: {
+    label: string;
+    id: string;
+    question: string;
+    retrieved: string;
+    expected: string;
+    generated: string;
+    outcomes: string[];
+    boundary: string;
+    caption: string;
+  };
 }
 
 export interface Project {
@@ -95,6 +107,7 @@ export const projects: Project[] = [
       contribution:
         "아이디어·사용자 흐름 설계, Flutter 주요 화면, FastAPI 인증·분석 연동과 시스템 통합에 참여했습니다.",
       ctaLabel: "Case Study 보기",
+      layout: "phone-flow",
     },
     links: [
       {
@@ -132,7 +145,7 @@ export const projects: Project[] = [
           alt: "피부타입 필터, 상품 점수와 긍정·부정 리뷰를 표시한 ReviewFit 실제 Streamlit 화면",
           width: 900,
           height: 483,
-          fit: "cover",
+          fit: "contain",
           presentation: "landscape",
         },
         {
@@ -145,6 +158,14 @@ export const projects: Project[] = [
           presentation: "diagram",
         },
       ],
+    },
+    homeEntry: {
+      summary:
+        "피부타입별 부정 신호 비율을 계산한 ReviewFit을, 추천·리뷰 데이터를 연결한 Spring MVC 서비스 BeautyLens로 확장했습니다.",
+      contribution:
+        "OliveYoung 리뷰를 직접 수집하고 제공받은 Musinsa·Coupang 데이터를 통합했습니다. 전처리·모델 비교·추천 집계 후 BeautyLens의 데이터 적재와 Spring MVC 기능을 구현했습니다.",
+      ctaLabel: "Case Study 보기",
+      layout: "evolution",
     },
     links: [
       {
@@ -194,6 +215,30 @@ export const projects: Project[] = [
           presentation: "landscape",
         },
       ],
+    },
+    homeEntry: {
+      summary:
+        "385쪽 영문 매뉴얼을 source 단위 QA 데이터와 2,703개 문서 청크 검색으로 연결하고, 검색 실패와 답변 실패를 나눠 확인한 text-only 실험입니다.",
+      contribution:
+        "PDF 데이터 가공, QA 작성·검증, QLoRA 실험, 검색 인덱스와 평가 코드, 실패 분석과 chatbot까지 전체 과정을 수행했습니다.",
+      ctaLabel: "Case Study 보기",
+      layout: "record",
+      evidence: {
+        label: "Actual RAG evaluation",
+        id: "eval_000078",
+        question:
+          "For fault code 0x0701, what condition does it indicate and what remedy does the table give?",
+        retrieved: "Gold context가 Top 5에 포함되지 않음",
+        expected:
+          "ec-H2O module needs a manually triggered flush; press the switch on the module.",
+        generated:
+          "Pre-Sweep main brush motor open fault; close the main brush motor open fault.",
+        outcomes: ["Retrieval miss", "Answer incorrect"],
+        boundary:
+          "반복 사용한 development/evaluation set의 한 기록이며, 독립 final test 결과가 아닙니다.",
+        caption:
+          "실제 평가 기록에서 검색 실패와 답변 오류가 함께 나타난 사례입니다.",
+      },
     },
     links: [
       {
