@@ -7,7 +7,7 @@ async function readBuiltPage(pathname: string): Promise<string> {
 }
 
 async function readBuiltCss(html: string): Promise<string> {
-  const cssHref = html.match(/<link\b[^>]*href="([^"]+\.css)"[^>]*>/i)?.[1];
+  const cssHref = html.match(/<link\b[^>]*href="(\/_astro\/[^"]+\.css)"[^>]*>/i)?.[1];
   expect(cssHref).toBeTruthy();
   return readFile(join(process.cwd(), "dist", cssHref!.replace(/^\//, "")), "utf8");
 }

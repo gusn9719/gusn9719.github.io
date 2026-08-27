@@ -64,7 +64,7 @@ describe("정적 사이트 출력", () => {
   it("BeautyLens ERD를 원본 비율로 반응형 출력한다", async () => {
     const html = await readBuiltPage("projects/reviewfit-beautylens/index.html");
     const image = html.match(/<img\b[^>]*beautylens-erd\.svg[^>]*>/i)?.[0];
-    const cssHref = html.match(/<link\b[^>]*href="([^"]+\.css)"[^>]*>/i)?.[1];
+    const cssHref = html.match(/<link\b[^>]*href="(\/_astro\/[^"]+\.css)"[^>]*>/i)?.[1];
 
     expect(image).toContain('width="1440"');
     expect(image).toContain('height="1050"');
