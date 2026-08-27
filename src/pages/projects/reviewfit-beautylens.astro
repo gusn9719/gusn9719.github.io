@@ -91,6 +91,12 @@ const sections = [
         <article><p class="summary-label">User</p><h3>상품을 찾고 반응을 남기는 흐름</h3><p>회원가입·로그인, 상품 검색·상세, 피부타입 추천, 외부 리뷰, 내부 평점·자극 여부·재구매 의사, 댓글·신고, 즐겨찾기와 마이페이지를 구현했습니다.</p></article>
         <article><p class="summary-label">Admin</p><h3>원본을 보존하며 운영하는 흐름</h3><p>상품 노출·추천 제외·품질 메모, 댓글·신고 soft delete·복구와 audit log를 구현했습니다. 외부 리뷰와 회원 의견은 별도 구조로 관리했습니다.</p></article>
       </div>
+      <div class="case-subsection">
+        <p class="summary-label">Reflection</p>
+        <h3>기능 수보다 문제와 사용자 흐름을 먼저 정했어야 했습니다.</h3>
+        <p>당시에는 수업에서 배운 Spring MVC와 DB 기능을 많이 구현하면 하나의 서비스가 될 것이라고 생각했습니다. 회원·상품·추천·댓글·관리자 기능을 연결한 경험은 남았지만, 완성 뒤에 화면을 다시 보면서 사용 이유와 이용 순서를 처음부터 충분히 정하지 않았다는 점을 확인했습니다. 일부 화면은 다시 다듬었지만 서비스를 사용자 중심으로 전면 개선했다고 표현하지 않습니다.</p>
+        <p>얼굴 로그인도 처음부터 넣고 싶었던 기능이지만 구현 난이도와 시간을 구체적으로 계산하지 못했습니다. 남은 기간에 직접 얼굴 인식 모델을 만드는 대신 InsightFace를 FastAPI 서비스로 분리해 Spring과 연결했습니다. 제한된 시간 안에서 기능을 완성한 선택이었고, 다음에는 기능을 정할 때 필요한 기술과 검증 범위를 먼저 확인해야 한다는 기준이 남았습니다.</p>
+      </div>
       <figure class="inline-visual inline-visual--diagram">
         <img src="/assets/beautylens/beautylens-erd.svg" alt="상품, 외부 리뷰, 회원 평가, 댓글, 신고와 관리자 기록의 관계를 나타낸 BeautyLens ERD" width="1440" height="1050" loading="lazy" decoding="async" />
         <figcaption>현재 BeautyLens 문서의 최신 ERD. 과거 PDF ERD는 중복·불일치 테이블이 있어 사용하지 않았습니다.</figcaption>
@@ -114,7 +120,12 @@ const sections = [
     <div class="case-section__title"><p>05</p><h2 id="review-solving">Problem Solving</h2></div>
     <div class="case-copy story-list">
       <article><p class="story-list__number">01 / Collection</p><h3><code>page</code> 값을 바꿔도 같은 리뷰가 반복됐습니다.</h3><p>요청·응답을 비교해 숫자 page가 아니라 cursor가 다음 구간을 가리킨다는 것을 확인했습니다. cursor와 중단 지점을 저장하고 <code>review_id</code> 중복 제거를 추가해 429 이후에도 안전하게 재개할 수 있게 했습니다.</p></article>
-      <article><p class="story-list__number">02 / Labeling</p><h3>별점 기반 라벨이 실제 부정 문장을 놓쳤습니다.</h3><p>낮은 별점인데 부정 라벨이 아닌 표본 50개를 직접 검토했고 48개가 실제 부정 문장이었습니다. 활용형이 붙는 표현을 찾아 부정 키워드를 17개에서 55개로 확장한 뒤 다시 라벨과 예측을 비교했습니다.</p></article>
+      <article>
+        <p class="story-list__number">02 / Labeling</p>
+        <h3>별점과 17개 키워드를 그대로 믿지 않았습니다.</h3>
+        <p>처음에는 1–2점을 부정, 3점을 중립, 4–5점을 긍정 후보로 두었습니다. 실제 리뷰를 확인하니 높은 별점에도 “눈에 따가워요”처럼 불만이 있었고, 별점과 본문 단서가 분명히 충돌하는 리뷰는 억지로 확정하지 않고 <code>ambiguous</code>로 분리했습니다.</p>
+        <p>또 “효과 없”은 찾으면서 “효과가 없”은 놓치는 865건을 확인해 부정 키워드를 17개에서 55개로 늘렸습니다. 반대로 1–2점과 mixed 본문이 겹친 표본 50개는 직접 읽어 48개가 실제 부정임을 확인한 뒤 negative로 복구했습니다. 이 과정이 있어도 라벨은 사람이 전수 판정한 정답이 아니라 weak label이라는 한계를 유지합니다.</p>
+      </article>
       <article><p class="story-list__number">03 / Integration</p><h3>화면 오류를 UI 문제로 단정하지 않았습니다.</h3><p>Spring parameter binding, MyBatis SQL, Oracle schema를 순서대로 확인했습니다. 생성되지 않은 컬럼은 <code>user_tab_columns</code>로 확인하고, nullable 값의 <code>ORA-17004</code>는 MyBatis에 <code>jdbcType</code>을 명시해 해결했습니다.</p></article>
     </div>
   </section>

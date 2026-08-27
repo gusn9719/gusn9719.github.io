@@ -40,6 +40,12 @@ const sections = [
   <section class="case-section" aria-labelledby="gemma-dataset">
     <div class="case-section__title"><p>02</p><h2 id="gemma-dataset">Dataset Design</h2></div>
     <div class="case-copy">
+      <div class="case-subsection">
+        <p class="summary-label">Starting point</p>
+        <h3>QA 개수보다 원문으로 돌아갈 수 있는 구조가 먼저였습니다.</h3>
+        <p>처음에는 train 300쌍과 eval 60쌍이라는 수량 요구가 가장 중요해 보였습니다. 매뉴얼을 직접 확인하니 도면, 표, 조작 패널과 절차 이미지가 많아 텍스트만으로는 근거를 다시 확인하기 어려웠습니다. 그래서 source unit에 이미지 block과 전체 page render를 연결하고 경로를 검증했습니다.</p>
+        <p>자동 검사 뒤에는 train 40건과 eval 40건을 직접 읽었습니다. 이 과정에서 잘못 연결된 이미지, 잘린 section명, 미완성 고장코드 답변과 OCR 노이즈를 찾아 수정했습니다. 자동 검사를 통과했다는 사실만으로 내용 품질까지 확인됐다고 보지 않았습니다.</p>
+      </div>
       <MetricGrid
         label="Gemma4 T17 데이터셋 구성"
         metrics={[
@@ -105,7 +111,7 @@ const sections = [
     <div class="case-section__title"><p>05</p><h2 id="gemma-solving">Problem Solving</h2></div>
     <div class="case-copy story-list">
       <article><p class="story-list__number">01 / Evaluation alignment</p><h3>검색이 맞았는데도 실패로 계산되는 사례를 확인했습니다.</h3><p>실제 정답이 있는 source unit보다 넓은 gold context가 연결된 사례를 추적했습니다. source unit과 corpus chunk의 평가 기준을 맞춘 뒤 retrieval 규칙을 다시 비교했습니다.</p></article>
-      <article><p class="story-list__number">02 / Experiment choice</p><h3>큰 rank 대신 측정 결과가 나은 구성을 선택했습니다.</h3><p>세 pilot의 validation loss와 memory를 함께 비교해 rank 16, learning rate 3e-4 구성을 선택했습니다.</p></article>
+      <article><p class="story-list__number">02 / Experiment order</p><h3>전체 학습보다 작은 smoke test를 먼저 실행했습니다.</h3><p>전체 학습에서 오류를 뒤늦게 발견하지 않도록 작은 sample로 데이터 로딩, tokenizer, LoRA 설정, sequence 길이, 이미지 경로와 GPU memory를 먼저 확인했습니다. max sequence 초과와 이미지 참조 문제를 이 단계에서 확인해 조치한 뒤 전체 학습으로 넘어갔습니다. smoke test는 성능 평가가 아니라 pipeline이 처음부터 끝까지 동작하는지 확인하는 단계로 사용했습니다.</p></article>
       <article><p class="story-list__number">03 / Unanswerable</p><h3>근거가 부족한 질문에도 답을 만드는 문제를 분리했습니다.</h3><p>unanswerable 질문을 평가셋에 포함하고 검색 점수와 prompt 규칙을 이용해 근거 부족을 알리는 경로를 추가했습니다.</p></article>
     </div>
   </section>
