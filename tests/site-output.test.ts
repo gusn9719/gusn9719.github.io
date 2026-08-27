@@ -117,18 +117,36 @@ describe("정적 사이트 출력", () => {
     }
   });
 
-  it("영상은 자동 재생하지 않고 모든 콘텐츠 이미지에 대체 텍스트를 둔다", async () => {
+  it("영상은 poster와 원본 비율을 예약하고 metadata만 미리 읽으며 자동 재생하지 않는다", async () => {
+    const securityHtml = await readBuiltPage("projects/security-hub/index.html");
+    const reviewHtml = await readBuiltPage("projects/reviewfit-beautylens/index.html");
+    const securityVideo = securityHtml.match(/<video\b[^>]*>/i)?.[0];
+    const reviewVideo = reviewHtml.match(/<video\b[^>]*>/i)?.[0];
+
+    expect(securityVideo).toBeTruthy();
+    expect(securityVideo).toContain('width="334"');
+    expect(securityVideo).toContain('height="720"');
+    expect(securityVideo).toContain('preload="metadata"');
+    expect(securityVideo).toContain('poster="/assets/security-hub/analysis-result-poster.webp"');
+    expect(securityVideo).not.toMatch(/\bautoplay\b/i);
+
+    expect(reviewVideo).toBeTruthy();
+    expect(reviewVideo).toContain('width="1280"');
+    expect(reviewVideo).toContain('height="686"');
+    expect(reviewVideo).toContain('preload="metadata"');
+    expect(reviewVideo).toContain('poster="/assets/reviewfit/reviewfit-service-poster.webp"');
+    expect(reviewVideo).not.toMatch(/\bautoplay\b/i);
+  });
+
+  it("모든 콘텐츠 이미지에 대체 텍스트를 둔다", async () => {
     const pages = await Promise.all([
       readBuiltPage("projects/security-hub/index.html"),
       readBuiltPage("projects/reviewfit-beautylens/index.html"),
       readBuiltPage("projects/gemma4-t17-rag/index.html"),
     ]);
     const html = pages.join("\n");
-    const videos = html.match(/<video\b[^>]*>/gi) ?? [];
     const images = html.match(/<img\b[^>]*>/gi) ?? [];
 
-    expect(videos.length).toBe(2);
-    expect(videos.every((video) => !/\bautoplay\b/i.test(video))).toBe(true);
     expect(images.length).toBeGreaterThan(0);
     expect(images.every((image) => /\balt="[^"]+"/i.test(image))).toBe(true);
   });
