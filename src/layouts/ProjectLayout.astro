@@ -51,8 +51,6 @@ const nextProject = projects[(projectIndex + 1) % projects.length];
       </div>
     </header>
 
-    <slot name="lead-visual" />
-
     <nav class="project-section-nav" aria-label="Case Study 목차">
       <div class="project-section-nav__inner">
         <span>On this page</span>
@@ -63,6 +61,8 @@ const nextProject = projects[(projectIndex + 1) % projects.length];
         </ol>
       </div>
     </nav>
+
+    <slot name="lead-visual" />
 
     <div class="case-content">
       <slot />

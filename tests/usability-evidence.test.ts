@@ -165,6 +165,18 @@ describe("Portfolio usability and evidence", () => {
     }
   });
 
+  it("Case Study 목차를 lead visual보다 먼저 제공한다", async () => {
+    for (const pathname of caseStudyPages) {
+      const html = await readBuiltPage(pathname);
+      const navPosition = html.indexOf('class="project-section-nav"');
+      const leadVisualPosition = html.indexOf('class="project-visual');
+
+      expect(navPosition).toBeGreaterThan(-1);
+      expect(leadVisualPosition).toBeGreaterThan(-1);
+      expect(navPosition).toBeLessThan(leadVisualPosition);
+    }
+  });
+
   it("각 Case Study에서 이전·다음 프로젝트로 이동할 수 있다", async () => {
     for (const pathname of caseStudyPages) {
       const html = await readBuiltPage(pathname);
