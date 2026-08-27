@@ -122,7 +122,8 @@ describe("final portfolio polish", () => {
       "pretendard",
       "woff2-dynamic-subset",
     );
-    const fontFiles = (await readdir(fontDirectory)).filter((file) => file.endsWith(".woff2"));
+    const fontFiles = (await readdir(fontDirectory)).filter((file) => file.endsWith(".woff2")).sort();
+    const fontHash = createHash("sha256");
 
     expect(createHash("sha256").update(css).digest("hex")).toBe(
       "2973bcae80262dcb630cfb793fbf6af29bd986c769ee54953fb3e5b3e32323ca",
@@ -135,9 +136,14 @@ describe("final portfolio polish", () => {
     for (const fontFile of fontFiles) {
       const path = join(fontDirectory, fontFile);
       const [font, metadata] = await Promise.all([readFile(path), stat(path)]);
+      fontHash.update(fontFile).update("\0").update(font);
       expect(font.subarray(0, 4).toString("ascii"), fontFile).toBe("wOF2");
       expect(metadata.size, `${fontFile} size`).toBeLessThan(45_000);
     }
+
+    expect(fontHash.digest("hex")).toBe(
+      "862cd8cec3918a4589ade1641ad9c0ab25e84e5ceb4018348376a3763e7d7f09",
+    );
 
     await expect(
       stat(join(process.cwd(), "dist", "assets", "fonts", "PretendardVariable.woff2")),
