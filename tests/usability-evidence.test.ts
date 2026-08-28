@@ -149,6 +149,7 @@ describe("Portfolio usability and evidence", () => {
 
     expect(css).toMatch(/\.site-header\{[^}]*position:sticky/);
     expect(css).toMatch(/\.project-section-nav\{[^}]*position:sticky/);
+    expect(css).toMatch(/\.case-section__title h2\{[^}]*scroll-margin-top:3rem/);
 
     for (const pathname of caseStudyPages) {
       const html = await readBuiltPage(pathname);
@@ -160,7 +161,7 @@ describe("Portfolio usability and evidence", () => {
       const anchors = [...nav!.matchAll(/href="#([^"]+)"/g)].map((match) => match[1]);
       expect(anchors.length).toBeGreaterThanOrEqual(5);
       for (const id of anchors) {
-        expect(html).toContain(`id="${id}"`);
+        expect(html).toMatch(new RegExp(`<h2\\b[^>]*id="${id}"`));
       }
     }
   });

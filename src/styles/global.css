@@ -1054,6 +1054,7 @@ h4 {
 
 .case-section__title h2 {
   margin-bottom: 0;
+  scroll-margin-top: 3rem;
   font-size: clamp(1.8rem, 3vw, 2.5rem);
 }
 
